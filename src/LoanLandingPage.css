@@ -1,0 +1,226 @@
+/* LoanLandingPage.css */
+
+/* Global Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Header Styles */
+  .header {
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  
+  .navbar {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .navbar .logo {
+    display: flex;
+    align-items: center;
+    color: #1d4ed8;
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+  
+  .navbar .nav-links {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .navbar .nav-links button {
+    background: none;
+    border: none;
+    color: #1e3a8a;
+    cursor: pointer;
+  }
+  
+  /* Hero Section */
+  .hero {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 1rem;
+    text-align: center;
+  }
+  
+  .hero h1 {
+    font-size: 2.5rem;
+    color: #1e3a8a;
+    font-weight: bold;
+  }
+  
+  .hero p {
+    margin-top: 1rem;
+    color: #64748b;
+    font-size: 1.125rem;
+  }
+  
+  .hero .buttons {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  /* Features Section */
+  .features {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 1rem;
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 2rem;
+  }
+  
+  .features-item {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s;
+  }
+  
+  .features-item:hover {
+    transform: translateY(-5px);
+  }
+  
+  .features-item h3 {
+    margin-top: 1rem;
+    color: #1e3a8a;
+    font-weight: 600;
+  }
+  
+  .features-item p {
+    color: #64748b;
+    margin-top: 0.5rem;
+  }
+  
+  /* Chat Icon and Chat Window */
+  .chat-icon {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    background-color: #1d4ed8;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  
+  .chat-window {
+    position: fixed;
+    bottom: 6rem;
+    right: 1.5rem;
+    width: 20rem;
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+
+  /* Chat Window Styling */
+.chat-window {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 350px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+    max-height: 80vh;
+  }
+  
+  .chat-header {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 8px 8px 0 0;
+    font-size: 1.1em;
+  }
+  
+  .chat-header h3 {
+    margin: 0;
+  }
+  
+  .close-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5em;
+    cursor: pointer;
+  }
+  
+  .chat-content {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .chat-welcome-text {
+    font-size: 1.1em;
+    color: #555;
+  }
+  
+  .chat-input {
+    display: flex;
+    padding: 12px;
+    border-top: 1px solid #ddd;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .input-field {
+    width: 70%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    margin-right: 8px;
+  }
+  
+  .send-button {
+    background-color: #28a745;
+    color: white;
+    font-size: 1em;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .send-button:hover {
+    background-color: #218838;
+  }
+  
+  .input-field:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
