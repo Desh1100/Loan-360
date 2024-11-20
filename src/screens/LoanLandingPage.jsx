@@ -1,111 +1,298 @@
 import React, { useState } from 'react';
 import {
   MDBContainer,
-
   MDBFooter,
   MDBBtn,
   MDBCarousel,
   MDBCarouselItem,
   MDBRow,
   MDBCol,
+  MDBIcon,
+  MDBCard,
+  MDBCardBody,
+  MDBCardTitle,
+  MDBCardText,
+
 } from 'mdb-react-ui-kit';
+
 import FeaturesSection from '../components/ui/FeaturesSection';
 import ChatIcon from '../components/ui/ChatIcon';
 import ChatWindow from '../components/ui/ChatWindow';
 import '../LoanLandingPage.css';
-import Header from '../components/ui/Header'
-
-
+import Header from '../components/ui/Header';
 
 function LoanLandingPage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('personal');
+
+  const loanTypes = [
+    { id: 'personal', name: 'Personal Loan', icon: 'user', rate: '8.99%' },
+    { id: 'home', name: 'Home Loan', icon: 'home', rate: '6.49%' },
+    { id: 'business', name: 'Business Loan', icon: 'briefcase', rate: '10.99%' }
+  ];
 
   return (
-    <>
+    <div style={{ backgroundColor: '#f8f9fa' }}>
+      <Header />
 
-
-        <Header/>
-           <MDBCarousel showControls>
-      <MDBCarouselItem itemId={1}>
-        <img src='https://cdn.prod.website-files.com/6624dafd5ec71461271eb9b5/6643d4a44587197d1d5f5457_d03003e4de2a.webp' className='d-block w-100' alt='...' />
-      </MDBCarouselItem>
-      <MDBCarouselItem itemId={2}>
-        <img src='https://img.freepik.com/free-vector/bank-loan-credit-mortgage-isometric-flowchart-with-financial-symbols-gradient-blue-background-3d-vector-illustration_1284-78866.jpg' className='d-block w-100' alt='...' />
-      </MDBCarouselItem>
-      <MDBCarouselItem itemId={3}>
-        <img src='https://visbanking.com/wp-content/uploads/2023/02/The-Ultimate-Guide-to-Bank-Loans-.jpeg' className='d-block w-100' alt='...' />
-      </MDBCarouselItem>
-    </MDBCarousel>
-        
-      {/* Hero Section */}
-      <MDBContainer fluid className="text-center" style={{ backgroundColor: '#f8f9fa' }}>
-      {/* <div
-        className='text-center bg-image'
-        style={{ backgroundImage: "url('https://media.istockphoto.com/id/1026040678/photo/real-estate-agent-and-customers-shaking-hands-together-celebrating-finished-contract-after.jpg?s=612x612&w=0&k=20&c=Ee68dE3NLOxI9OPvuBw7P22YL_QoEyIf160ehHJ85iw=')", height: '400px' }}
-      > */}
-        <div className='mask' style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}>
-          <div className='d-flex justify-content-center align-items-center h-100'>
-            <div className='text-white'>
-              <h1 className='mb-3'><b>Welcome to BankLoanApp</b> </h1>
-              <h5 className='mb-3'>Your trusted partner for easy and reliable bank loans. Apply for a loan today and achieve your dreams with us.</h5>
-              <MDBBtn size="lg" color="success" href="/PersonalInfo">
-                Apply Loan
-               </MDBBtn>
+              {/* Enhanced Carousel Section */}
+        <MDBCarousel
+          showControls
+          showIndicators
+          fade
+          interval={3000}
+          style={{
+            maxHeight: '600px',
+            overflow: 'hidden',
+            position: 'relative',
+          }}
+        >
+          <MDBCarouselItem itemId={1}>
+            <img
+              src="https://thumbs.dreamstime.com/b/man-holding-national-currency-sri-lanka-paper-money-bills-rupee-banknotes-coins-table-devaluation-high-inflation-state-285477041.jpg"
+              className="d-block w-100"
+              alt="First slide"
+              style={{
+                objectFit: 'cover',
+                height: '600px',
+                width: '100%',
+              }}
+            />
+            <div
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                textAlign: 'center',
+                color: 'white',
+                textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+                zIndex: 1, // ensures text is above the image
+              }}
+            >
+              <h2 className="display-4 fw-bold">Personal Loans Made Easy</h2>
+              <p className="lead">Start your journey to financial freedom</p>
             </div>
-          </div>
-        </div>
-      {/* </div> */}
-       
+          </MDBCarouselItem>
+
+          <MDBCarouselItem itemId={2}>
+            <img
+              src="https://t4.ftcdn.net/jpg/00/91/05/77/360_F_91057716_HqQb0sbXWBQ1TZzhncrInUGl1Z5P1Co8.jpg"
+              className="d-block w-100"
+              alt="Second slide"
+              style={{
+                objectFit: 'cover',
+                height: '600px',
+                width: '100%',
+              }}
+            />
+            <div
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                textAlign: 'center',
+                color: 'white',
+                textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+                zIndex: 1,
+              }}
+            >
+              <h2 className="display-4 fw-bold">Get the Loan You Need</h2>
+              <p className="lead">Flexible terms and easy repayment options</p>
+            </div>
+          </MDBCarouselItem>
+
+          <MDBCarouselItem itemId={3}>
+            <img
+              src="https://s3.ap-southeast-1.amazonaws.com/dfcc.lk/wp-content/uploads/2019/06/05095108/Personal-Loans-Landing-Page.jpg"
+              className="d-block w-100"
+              alt="Third slide"
+              style={{
+                objectFit: 'cover',
+                height: '600px',
+                width: '100%',
+              }}
+            />
+            <div
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                textAlign: 'center',
+                color: 'white',
+                textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+                zIndex: 1,
+              }}
+            >
+              <h2 className="display-4 fw-bold">Achieve Your Dreams with Us</h2>
+              <p className="lead">Tailored loan solutions to fit your needs</p>
+            </div>
+          </MDBCarouselItem>
+        </MDBCarousel>
+
+
+      {/* Enhanced Hero Section */}
+      <MDBContainer fluid className="p-5" style={{ 
+        background: 'linear-gradient(135deg, #1266f1 0%, #0d47a1 100%)',
+        color: 'white'
+      }}>
+        <MDBRow className="justify-content-center align-items-center">
+          <MDBCol md="6" className="text-center">
+            <h1 className="display-4 fw-bold mb-4">Welcome to BankLoanApp</h1>
+            <p className="lead mb-4">Your trusted partner for easy and reliable bank loans. Apply for a loan today and achieve your dreams with us.</p>
+            <MDBBtn size="lg" style={{
+              background: 'white',
+              color: '#1266f1',
+              padding: '15px 30px',
+              borderRadius: '30px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+            }}  href="/PersonalInfo">
+              <MDBIcon fas icon="file-signature" className="me-2" /> Apply Now
+            </MDBBtn>
+          </MDBCol>
+        </MDBRow>
+      </MDBContainer>
+
+      {/* Loan Types Section */}
+      <MDBContainer className="py-5">
+        <h2 className="text-center mb-5 fw-bold">Choose Your Loan Type</h2>
+        <MDBRow className="g-4">
+          {loanTypes.map((loan) => (
+            <MDBCol md="4" key={loan.id}>
+              <MDBCard 
+                className="h-100" 
+                style={{
+                  cursor: 'pointer',
+                  transform: activeTab === loan.id ? 'translateY(-5px)' : 'none',
+                  transition: 'all 0.3s ease',
+                  boxShadow: activeTab === loan.id ? '0 10px 20px rgba(0,0,0,0.1)' : '0 4px 12px rgba(0,0,0,0.05)'
+                }}
+                onClick={() => setActiveTab(loan.id)}
+              >
+                <MDBCardBody className="text-center">
+                  <div className="mb-3">
+                    <MDBIcon 
+                      fas 
+                      icon={loan.icon} 
+                      size="2x" 
+                      style={{
+                        color: '#1266f1',
+                        backgroundColor: '#e3f2fd',
+                        padding: '20px',
+                        borderRadius: '50%'
+                      }}
+                    />
+                  </div>
+                  <MDBCardTitle>{loan.name}</MDBCardTitle>
+                  <MDBCardText>
+                    Starting from <span className="fw-bold text-primary">{loan.rate}</span> p.a.
+                  </MDBCardText>
+                  <MDBBtn color="primary" outline>Learn More</MDBBtn>
+                </MDBCardBody>
+              </MDBCard>
+            </MDBCol>
+          ))}
+        </MDBRow>
       </MDBContainer>
 
       {/* Features Section */}
-      <MDBContainer className="my-5" id="features">
-        <FeaturesSection />
+      <FeaturesSection />
+
+      {/* Enhanced Stats Section */}
+      <MDBContainer fluid className="py-5" style={{ backgroundColor: '#e3f2fd' }}>
+        <MDBRow className="justify-content-center text-center g-4">
+          {[
+            { number: '10K+', text: 'Happy Customers' },
+            { number: '$50M+', text: 'Loans Disbursed' },
+            { number: '4.9/5', text: 'Customer Rating' },
+            { number: '24/7', text: 'Customer Support' }
+          ].map((stat, index) => (
+            <MDBCol md="3" key={index}>
+              <h2 className="fw-bold text-primary mb-2">{stat.number}</h2>
+              <p className="mb-0">{stat.text}</p>
+            </MDBCol>
+          ))}
+        </MDBRow>
       </MDBContainer>
 
-      {/* Footer */}
-      <MDBFooter className="text-center text-lg-start bg-light text-muted">
-        <section className="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
-          <div>
-            <span>Connect with us on social networks:</span>
-          </div>
-        </section>
+      {/* Enhanced Footer */}
+      <MDBFooter className="text-white" style={{ backgroundColor: '#0d47a1' }}>
+        <MDBContainer className="p-4">
+          <MDBRow>
+            <MDBCol lg="3" md="6" className="mb-4 mb-md-0">
+              <h5 className="fw-bold mb-4">BankLoanApp</h5>
+              <p>Your trusted partner for all loan solutions.</p>
+            </MDBCol>
 
-        <section className="">
-          <MDBContainer className="text-center text-md-start mt-5">
-            <MDBRow className="mt-3">
-              <MDBCol md="3" lg="4" xl="3" className="mx-auto mb-4">
-                <h6 className="text-uppercase fw-bold mb-4">BankLoanApp</h6>
-                <p>Your trusted partner for all loan solutions.</p>
-              </MDBCol>
-              <MDBCol md="2" lg="2" xl="2" className="mx-auto mb-4">
-                <h6 className="text-uppercase fw-bold mb-4">Quick Links</h6>
-                <p>
-                  <a href="#!" className="text-reset">
-                    Apply Now
-                  </a>
-                </p>
-                <p>
-                  <a href="#!" className="text-reset">
-                    About Us
-                  </a>
-                </p>
-              </MDBCol>
-            </MDBRow>
-          </MDBContainer>
-        </section>
+            <MDBCol lg="3" md="6" className="mb-4 mb-md-0">
+              <h5 className="fw-bold mb-4">Quick Links</h5>
+              <ul className="list-unstyled mb-0">
+                <li className="mb-2">
+                  <a href="#!" className="text-white">About Us</a>
+                </li>
+                <li className="mb-2">
+                  <a href="#!" className="text-white">Loan Types</a>
+                </li>
+                <li className="mb-2">
+                  <a href="#!" className="text-white">Calculator</a>
+                </li>
+              </ul>
+            </MDBCol>
 
-        <div className="text-center p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.05)' }}>
+            <MDBCol lg="3" md="6" className="mb-4 mb-md-0">
+              <h5 className="fw-bold mb-4">Contact Us</h5>
+              <ul className="list-unstyled mb-0">
+                <li className="mb-2">
+                  <MDBIcon fas icon="envelope" className="me-2" />
+                  support@bankloanapp.com
+                </li>
+                <li className="mb-2">
+                  <MDBIcon fas icon="phone" className="me-2" />
+                  1-800-LOAN-APP
+                </li>
+              </ul>
+            </MDBCol>
+
+            <MDBCol lg="3" md="6" className="mb-4 mb-md-0">
+              <h5 className="fw-bold mb-4">Follow Us</h5>
+              <div className="d-flex gap-3">
+                {['facebook', 'twitter', 'linkedin', 'instagram'].map((social) => (
+                  <a 
+                    key={social} 
+                    href={`#${social}`}
+                    style={{
+                      backgroundColor: 'rgba(255,255,255,0.1)',
+                      width: '40px',
+                      height: '40px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: '50%',
+                      transition: 'all 0.3s ease'
+                    }}
+                    className="text-white hover-overlay"
+                  >
+                    <MDBIcon fab icon={social} />
+                  </a>
+                ))}
+              </div>
+            </MDBCol>
+          </MDBRow>
+        </MDBContainer>
+
+        <div className="text-center p-3" style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)' }}>
           © 2024 BankLoanApp. All Rights Reserved.
         </div>
       </MDBFooter>
 
-      {/* Chatbot */}
+      {/* Chat Icon */}
       <div className="chat-icon">
         <ChatIcon onClick={() => setIsChatOpen(!isChatOpen)} />
         {isChatOpen && <ChatWindow onClose={() => setIsChatOpen(false)} />}
       </div>
-    </>
+    </div>
   );
 }
 

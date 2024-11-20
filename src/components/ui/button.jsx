@@ -1,48 +1,68 @@
+// src/ui/button.jsx
 import React from 'react';
-import PropTypes from 'prop-types';
-import clsx from 'clsx';
 
-const Button = ({ variant, size, children, className, ...props }) => {
-  // Define different styles for the variants and sizes
-  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-md focus:outline-none';
-  const variantStyles = {
-    default: 'bg-blue-600 text-white hover:bg-blue-700',
-    outline: 'border border-blue-600 text-blue-600 hover:bg-blue-50',
-    ghost: 'text-gray-700 hover:bg-gray-100',
-  };
-  const sizeStyles = {
-    sm: 'px-3 py-1 text-sm',
-    lg: 'px-6 py-3 text-lg',
-    default: 'px-4 py-2',
+const Button = ({ children, variant, onClick }) => {
+  // Define inline styles for the button
+  const baseStyle = {
+    padding: '10px 20px',
+    borderRadius: '5px',
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: '16px',
+    fontWeight: 'bold',
+    transition: 'background-color 0.3s ease, color 0.3s ease',
   };
 
-  // Combine the styles based on the props passed
-  const buttonClasses = clsx(
-    baseStyles,
-    variantStyles[variant || 'default'],
-    sizeStyles[size || 'default'],
-    className
-  );
+  // Define variant styles
+  const ghostStyle = {
+    ...baseStyle,
+    backgroundColor: 'transparent',
+    color: '#ff6219',
+    border: '2px solid #ff6219',
+  };
+
+  const ghostHoverStyle = {
+    ...ghostStyle,
+    backgroundColor: '#ff6219',
+    color: 'white',
+  };
+
+  const defaultStyle = {
+    ...baseStyle,
+    backgroundColor: '#ff6219',
+    color: 'white',
+  };
+
+  const defaultHoverStyle = {
+    ...defaultStyle,
+    backgroundColor: '#ff4500',
+  };
+
+  // Choose the appropriate styles based on the variant
+  const buttonStyle =
+    variant === 'ghost' ? ghostStyle : defaultStyle;
+  const buttonHoverStyle =
+    variant === 'ghost' ? ghostHoverStyle : defaultHoverStyle;
+
+  // Handle mouse hover for button styles
+  const [hovered, setHovered] = React.useState(false);
+
+  const handleMouseEnter = () => setHovered(true);
+  const handleMouseLeave = () => setHovered(false);
+
+  // Apply the hover effect
+  const appliedStyle = hovered ? buttonHoverStyle : buttonStyle;
 
   return (
-    <button className={buttonClasses} {...props}>
+    <button
+      style={appliedStyle}
+      onClick={onClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       {children}
     </button>
   );
-};
-
-// Define the prop types and defaults
-Button.propTypes = {
-  variant: PropTypes.oneOf(['default', 'outline', 'ghost']),
-  size: PropTypes.oneOf(['sm', 'lg', 'default']),
-  children: PropTypes.node.isRequired,
-  className: PropTypes.string,
-};
-
-Button.defaultProps = {
-  variant: 'default',
-  size: 'default',
-  className: '',
 };
 
 export default Button;

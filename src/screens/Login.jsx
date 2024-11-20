@@ -11,13 +11,15 @@ import {
   MDBRow,
   MDBCol,
   MDBIcon,
-  MDBInput
+  MDBInput,
+  MDBSpinner, // For loading spinner
 } from 'mdb-react-ui-kit';
 
 function Login() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false); // For loading state
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -25,16 +27,21 @@ function Login() {
   };
 
   const handleLogin = async () => {
+    setLoading(true); // Set loading state to true before sending request
     try {
       const response = await axios.post('http://localhost:8001/api/users/login', formData, {
         withCredentials: true, // Ensures cookies are sent
       });
       if (response.status === 200) {
         // Redirect to landing page on successful login
-        navigate('/Landing');
+        setTimeout(() => {
+          setLoading(false); // Reset loading state after 1 second for nice buffering
+          navigate('/Landing');
+        }, 1000); // Delay navigation to simulate buffering effect
       }
     } catch (err) {
       setError(err.response?.data?.error || 'Login failed. Please try again.');
+      setLoading(false); // Reset loading state on error
     }
   };
 
@@ -84,9 +91,17 @@ function Login() {
 
               {error && <p style={{ color: 'red' }}>{error}</p>}
 
-              <MDBBtn className="mb-4 px-5" color='dark' size='lg' onClick={handleLogin}>
-                Login
-              </MDBBtn>
+              {/* Display loading spinner if logging in */}
+              {loading ? (
+                <MDBSpinner role="status" tag="span" size="lg" className="mx-2">
+                  <span className="visually-hidden">Loading...</span>
+                </MDBSpinner>
+              ) : (
+                <MDBBtn className="mb-4 px-5" color='dark' size='lg' onClick={handleLogin}>
+                  Login
+                </MDBBtn>
+              )}
+
               <a className="small text-muted" href="#!">Forgot password?</a>
               <p className="mb-5 pb-lg-2" style={{ color: '#393f81' }}>
                 Don't have an account? <Link to="/register" style={{ color: '#393f81' }}>Register here</Link>
