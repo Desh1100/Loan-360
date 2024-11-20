@@ -9,8 +9,7 @@ import {
   MDBBtn,
   MDBCard,
   MDBCardBody,
-  MDBCardTitle,
-  MDBCardHeader
+
 } from 'mdb-react-ui-kit';
 import Header from '../components/ui/Header';
 

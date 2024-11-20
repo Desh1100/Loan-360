@@ -1,7 +1,7 @@
-// src/screens/Login.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import axios from 'axios'; // For HTTP requests
 import {
   MDBBtn,
   MDBContainer,
@@ -15,13 +15,29 @@ import {
 } from 'mdb-react-ui-kit';
 
 function Login() {
-
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({ username: '', password: '' });
+  const [error, setError] = useState('');
 
-  const handleLogin = () => {
-    // Add authentication logic here if needed
-    navigate('/Landing');
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
+
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post('http://localhost:8001/api/users/login', formData, {
+        withCredentials: true, // Ensures cookies are sent
+      });
+      if (response.status === 200) {
+        // Redirect to landing page on successful login
+        navigate('/Landing');
+      }
+    } catch (err) {
+      setError(err.response?.data?.error || 'Login failed. Please try again.');
+    }
+  };
+
   return (
     <MDBContainer className="my-5">
       <MDBCard>
@@ -45,10 +61,32 @@ function Login() {
                 Sign into your account
               </h5>
 
-              <MDBInput wrapperClass='mb-4' label='Email address' id='formControlLg' type='email' size="lg" />
-              <MDBInput wrapperClass='mb-4' label='Password' id='formControlLg' type='password' size="lg" />
+              <MDBInput
+                wrapperClass='mb-4'
+                label='Username'
+                id='username'
+                name='username'
+                type='text'
+                size="lg"
+                value={formData.username}
+                onChange={handleInputChange}
+              />
+              <MDBInput
+                wrapperClass='mb-4'
+                label='Password'
+                id='password'
+                name='password'
+                type='password'
+                size="lg"
+                value={formData.password}
+                onChange={handleInputChange}
+              />
 
-              <MDBBtn className="mb-4 px-5" color='dark' size='lg' onClick={handleLogin}>Login</MDBBtn>
+              {error && <p style={{ color: 'red' }}>{error}</p>}
+
+              <MDBBtn className="mb-4 px-5" color='dark' size='lg' onClick={handleLogin}>
+                Login
+              </MDBBtn>
               <a className="small text-muted" href="#!">Forgot password?</a>
               <p className="mb-5 pb-lg-2" style={{ color: '#393f81' }}>
                 Don't have an account? <Link to="/register" style={{ color: '#393f81' }}>Register here</Link>

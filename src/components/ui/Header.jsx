@@ -6,7 +6,7 @@ import '../../../src/LoanLandingPage.css';
 import { Link } from 'react-router-dom';
 import {
   MDBIcon,
-  MDBInput
+
 } from 'mdb-react-ui-kit';
 
 const Header = () => (
