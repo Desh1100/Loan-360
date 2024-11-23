@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import axios from 'axios'; // For HTTP requests
+import axios from 'axios';
 import {
   MDBBtn,
   MDBContainer,
@@ -12,14 +12,14 @@ import {
   MDBCol,
   MDBIcon,
   MDBInput,
-  MDBSpinner, // For loading spinner
+  MDBSpinner,
 } from 'mdb-react-ui-kit';
 
 function Login() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false); // For loading state
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -27,21 +27,31 @@ function Login() {
   };
 
   const handleLogin = async () => {
-    setLoading(true); // Set loading state to true before sending request
+    if (!formData.username || !formData.password) {
+      setError('Both username and password are required');
+      return;
+    }
+    setError(''); // Clear previous errors
+    setLoading(true);
+
     try {
       const response = await axios.post('http://localhost:8001/api/users/login', formData, {
-        withCredentials: true, // Ensures cookies are sent
+        withCredentials: true,
       });
+
       if (response.status === 200) {
-        // Redirect to landing page on successful login
-        setTimeout(() => {
-          setLoading(false); // Reset loading state after 1 second for nice buffering
-          navigate('/Landing');
-        }, 1000); // Delay navigation to simulate buffering effect
+        const { token, user } = response.data;
+
+        // Store token and user ID in localStorage
+        localStorage.setItem('jwt_token', token);
+        localStorage.setItem('user_id', user._id);
+
+        setLoading(false);
+        navigate('/Landing'); // Navigate to Landing page
       }
     } catch (err) {
       setError(err.response?.data?.error || 'Login failed. Please try again.');
-      setLoading(false); // Reset loading state on error
+      setLoading(false);
     }
   };
 
@@ -91,7 +101,6 @@ function Login() {
 
               {error && <p style={{ color: 'red' }}>{error}</p>}
 
-              {/* Display loading spinner if logging in */}
               {loading ? (
                 <MDBSpinner role="status" tag="span" size="lg" className="mx-2">
                   <span className="visually-hidden">Loading...</span>

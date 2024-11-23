@@ -9,10 +9,9 @@ import {
   MDBBtn,
   MDBCard,
   MDBCardBody,
-
 } from 'mdb-react-ui-kit';
+import axios from 'axios';
 import Header from '../components/ui/Header';
-
 
 function LoanApplicationForm() {
   const [step, setStep] = useState(1);
@@ -22,7 +21,7 @@ function LoanApplicationForm() {
     title: '',
     homeTown: '',
     residentialAddress: '',
-    permanent_address:'',
+    permanent_address: '',
     taxPayable: '',
     addressProof: null,
     dependents: '',
@@ -30,46 +29,142 @@ function LoanApplicationForm() {
     occupation: '',
     otherIncome: '',
     monthlyDebit: '',
-    pol:''
+    eligibility_status: 'Pending',
+    suggested_loan_amount: '',
+    application_date: new Date().toISOString().split('T')[0],
   });
+
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    setErrors({ ...errors, [name]: '' }); // Clear error on change
   };
 
   const handleFileUpload = (e) => {
     setFormData({ ...formData, addressProof: e.target.files[0] });
+    setErrors({ ...errors, addressProof: '' }); // Clear error on file upload
   };
 
-  const nextStep = () => setStep(step + 1);
+  const validateStep = () => {
+    let newErrors = {};
+
+    if (step === 1) {
+      if (!formData.fullName) newErrors.fullName = 'Full Name is required';
+      if (!formData.nic) newErrors.nic = 'NIC is required';
+      if (!formData.title) newErrors.title = 'Title is required';
+      if (!formData.homeTown) newErrors.homeTown = 'Home Town is required';
+      if (!formData.residentialAddress)
+        newErrors.residentialAddress = 'Residential Address is required';
+      if (!formData.permanent_address)
+        newErrors.permanent_address = 'Permanent Address is required';
+      if (!formData.taxPayable)
+        newErrors.taxPayable = 'Please select whether Tax is payable';
+      if (!formData.addressProof)
+        newErrors.addressProof = 'Proof of Address is required';
+      if (!formData.dependents)
+        newErrors.dependents = 'Number of Dependents is required';
+    }
+
+    if (step === 2) {
+      if (!formData.basicSalary) newErrors.basicSalary = 'Basic Salary is required';
+      if (!formData.occupation) newErrors.occupation = 'Occupation is required';
+      if (!formData.monthlyDebit)
+        newErrors.monthlyDebit = 'Monthly Debit is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // Return true if no errors
+  };
+
+  const nextStep = () => {
+    if (validateStep()) {
+      setStep(step + 1);
+    }
+  };
+
   const prevStep = () => setStep(step - 1);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form Submitted:', formData);
-    alert('Loan application submitted successfully!');
+    if (validateStep()) {
+      // Retrieve user_id dynamically from localStorage
+      const userId = localStorage.getItem('user_id');
+  
+      if (!userId) {
+        alert('User ID not found. Please log in again.');
+        return;
+      }
+  
+      const loanData = {
+        user_id: userId, // Set user_id from localStorage
+        personal_details: {
+          full_name: formData.fullName,
+          nic: formData.nic,
+          title: formData.title,
+          home_town: formData.homeTown,
+          permenet_address: formData.permanent_address,
+          residential_address: formData.residentialAddress,
+          tax_payable: formData.taxPayable === 'Yes',
+        },
+        family_details: {
+          dependents: parseInt(formData.dependents, 10),
+        },
+        financial_details: {
+          employment_type: formData.employment_type || 'Salaried',
+          basic_salary: parseFloat(formData.basicSalary),
+          occupation: formData.occupation,
+          other_income: parseFloat(formData.otherIncome || 0),
+          monthly_debit: parseFloat(formData.monthlyDebit),
+        },
+        eligibility_status: formData.eligibility_status,
+        suggested_loan_amount: parseFloat(formData.suggested_loan_amount),
+        application_date:
+          formData.application_date || new Date().toISOString(),
+      };
+      try {
+        const token = localStorage.getItem('jwt_token');
+        const response = await axios.post(
+          'http://localhost:8001/api/loans/apply',
+          loanData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        alert('Loan application submitted successfully!');
+        console.log('Backend response:', response.data);
+      } catch (error) {
+        console.error('Error submitting loan application:', error.response || error);
+        alert('Error submitting loan application');
+      }
+    }
   };
-
   return (
-    
-    <MDBContainer >
-      <Header/>
+    <MDBContainer>
+      <Header />
       <div
-        className='text-center bg-image'
-        style={{ backgroundImage: "url('https://www.pentucketbank.com/assets/files/YD8ONdom/certificate-of-deposit-piggy-bank-growth.jpg')", height: '200px' }}
+        className="text-center bg-image"
+        style={{
+          backgroundImage:
+            "url('https://www.pentucketbank.com/assets/files/YD8ONdom/certificate-of-deposit-piggy-bank-growth.jpg')",
+          height: '200px',
+        }}
       >
-        <div className='mask' style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}>
-          <div className='d-flex justify-content-center align-items-center h-100'>
-            <div className='text-white'>
-              <h1 className='mb-3'><b>Loan Application Form</b> </h1>
-              
+        <div className="mask" style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}>
+          <div className="d-flex justify-content-center align-items-center h-100">
+            <div className="text-white">
+              <h1 className="mb-3">
+                <b>Loan Application Form</b>
+              </h1>
             </div>
           </div>
         </div>
       </div>
-      <MDBCard style={{marginTop:50}}>
-       
+      <MDBCard style={{ marginTop: 50 }}>
         <MDBCardBody>
           <form onSubmit={handleSubmit}>
             {/* Step 1: Personal & Family Information */}
@@ -158,9 +253,8 @@ function LoanApplicationForm() {
                   </MDBCol>
                 </MDBRow>
 
-
-                <MDBRow className="mb-4" >
-                  <MDBCol >
+                <MDBRow className="mb-4">
+                  <MDBCol>
                     <MDBFile
                       label="Proof of Address (PDF)"
                       id="addressProof"
@@ -173,32 +267,27 @@ function LoanApplicationForm() {
 
                 <MDBRow className="mb-4">
                   <MDBCol>
-                    <label className="form-label">Tax Payable:</label>
-                    <div>
-                      <MDBRadio
-                        name="taxPayable"
-                        id="taxPayableYes"
-                        label="Yes"
-                        value="Yes"
-                        checked={formData.taxPayable === 'Yes'}
-                        onChange={handleChange}
-                      />
-                      <MDBRadio
-                        name="taxPayable"
-                        id="taxPayableNo"
-                        label="No"
-                        value="No"
-                        checked={formData.taxPayable === 'No'}
-                        onChange={handleChange}
-                      />
-                    </div>
+                    <MDBRadio
+                      name="taxPayable"
+                      id="taxPayableYes"
+                      label="Yes"
+                      value="Yes"
+                      checked={formData.taxPayable === 'Yes'}
+                      onChange={handleChange}
+                    />
+                    <MDBRadio
+                      name="taxPayable"
+                      id="taxPayableNo"
+                      label="No"
+                      value="No"
+                      checked={formData.taxPayable === 'No'}
+                      onChange={handleChange}
+                    />
                   </MDBCol>
                 </MDBRow>
 
-             
-
                 <MDBRow className="mb-4">
-                  
+                  <MDBCol>
                     <MDBInput
                       label="Number of Dependents"
                       id="dependents"
@@ -208,7 +297,7 @@ function LoanApplicationForm() {
                       onChange={handleChange}
                       required
                     />
-                 
+                  </MDBCol>
                 </MDBRow>
               </>
             )}
@@ -250,7 +339,6 @@ function LoanApplicationForm() {
                       type="number"
                       value={formData.otherIncome}
                       onChange={handleChange}
-                      required
                     />
                   </MDBCol>
                 </MDBRow>
@@ -264,50 +352,57 @@ function LoanApplicationForm() {
                       type="number"
                       value={formData.monthlyDebit}
                       onChange={handleChange}
-                      required
                     />
                   </MDBCol>
                 </MDBRow>
+
+                {/* New fields */}
                 <MDBRow className="mb-4">
                   <MDBCol>
                     <MDBInput
-                      label="Purpose of loan"
-                      id="pol"
-                      name="pol"
+                      label="Eligibility Status"
+                      id="eligibility_status"
+                      name="eligibility_status"
                       type="text"
-                      value={formData.pol}
+                      value={formData.eligibility_status}
                       onChange={handleChange}
-                      required
+                    />
+                  </MDBCol>
+                </MDBRow>
+
+                <MDBRow className="mb-4">
+                  <MDBCol>
+                    <MDBInput
+                      label="Suggested Loan Amount"
+                      id="suggested_loan_amount"
+                      name="suggested_loan_amount"
+                      type="number"
+                      value={formData.suggested_loan_amount}
+                      onChange={handleChange}
+                    />
+                  </MDBCol>
+                </MDBRow>
+
+                <MDBRow className="mb-4">
+                  <MDBCol>
+                    <MDBInput
+                      label="Application Date"
+                      id="application_date"
+                      name="application_date"
+                      type="date"
+                      value={formData.application_date}
+                      onChange={handleChange}
+                      disabled
                     />
                   </MDBCol>
                 </MDBRow>
               </>
             )}
 
-            {/* Navigation Buttons */}
-            <MDBRow className="text-center">
-              <MDBCol>
-                {step > 1 && (
-                  <MDBBtn
-                    color="secondary"
-                    size="lg"
-                    onClick={prevStep}
-                    className="me-2"
-                  >
-                    Back
-                  </MDBBtn>
-                )}
-                {step < 2 ? (
-                  <MDBBtn color="primary" size="lg" onClick={nextStep}>
-                    Next
-                  </MDBBtn>
-                ) : (
-                  <MDBBtn type="submit" color="success" size="lg">
-                    Submit
-                  </MDBBtn>
-                )}
-              </MDBCol>
-            </MDBRow>
+            <div className="d-flex justify-content-between">
+              {step === 1 && <MDBBtn color="primary" onClick={nextStep}>Next</MDBBtn>}
+              {step === 2 && <MDBBtn color="success" type="submit">Submit</MDBBtn>}
+            </div>
           </form>
         </MDBCardBody>
       </MDBCard>
