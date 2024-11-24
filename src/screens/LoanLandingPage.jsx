@@ -49,13 +49,14 @@ function LoanLandingPage() {
         >
           <MDBCarouselItem itemId={1}>
             <img
-              src="https://thumbs.dreamstime.com/b/man-holding-national-currency-sri-lanka-paper-money-bills-rupee-banknotes-coins-table-devaluation-high-inflation-state-285477041.jpg"
+              src="https://infomineo.com/wp-content/uploads/2022/06/virtual-credit-card_infomineo-scaled.jpg"
               className="d-block w-100"
               alt="First slide"
               style={{
                 objectFit: 'cover',
                 height: '600px',
                 width: '100%',
+                backgroundColor: 'rgba(0, 0, 0, 0.7)', // semi-transparent black overlay
               }}
             />
             <div
@@ -67,6 +68,7 @@ function LoanLandingPage() {
                 textAlign: 'center',
                 color: 'white',
                 textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+               
                 zIndex: 1, // ensures text is above the image
               }}
             >
@@ -84,6 +86,7 @@ function LoanLandingPage() {
                 objectFit: 'cover',
                 height: '600px',
                 width: '100%',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)', // semi-transparent black overlay
               }}
             />
             <div
@@ -112,6 +115,8 @@ function LoanLandingPage() {
                 objectFit: 'cover',
                 height: '600px',
                 width: '100%',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)', // semi-transparent black overlay
+          
               }}
             />
             <div
@@ -140,7 +145,7 @@ function LoanLandingPage() {
       }}>
         <MDBRow className="justify-content-center align-items-center">
           <MDBCol md="6" className="text-center">
-            <h1 className="display-4 fw-bold mb-4">Welcome to BankLoanApp</h1>
+            <h1 className="display-4 fw-bold mb-4">Welcome to QuickLoan</h1>
             <p className="lead mb-4">Your trusted partner for easy and reliable bank loans. Apply for a loan today and achieve your dreams with us.</p>
             <MDBBtn size="lg" style={{
               background: 'white',
