@@ -11,10 +11,14 @@ import {
   MDBCardBody,
 } from 'mdb-react-ui-kit';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/ui/Header';
+import Loader from '../components/ui/Loader'; // Assuming the loader is placed in the components folder
 
 function LoanApplicationForm() {
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false); // State for loader
+  const navigate = useNavigate(); // Hook for navigation
   const [formData, setFormData] = useState({
     fullName: '',
     nic: '',
@@ -86,17 +90,18 @@ function LoanApplicationForm() {
 
   const prevStep = () => setStep(step - 1);
 
+  //loan application submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateStep()) {
       // Retrieve user_id dynamically from localStorage
       const userId = localStorage.getItem('user_id');
-  
+
       if (!userId) {
         alert('User ID not found. Please log in again.');
         return;
       }
-  
+
       const loanData = {
         user_id: userId, // Set user_id from localStorage
         personal_details: {
@@ -136,16 +141,58 @@ function LoanApplicationForm() {
           }
         );
         alert('Loan application submitted successfully!');
+        setLoading(true); // Show loader
+        setTimeout(() => {
+          setLoading(false); // Hide loader
+          navigate('/landing'); // Navigate to /landing
+        }, 2000); // Simulate loading for 2 seconds
         console.log('Backend response:', response.data);
       } catch (error) {
         console.error('Error submitting loan application:', error.response || error);
         alert('Error submitting loan application');
       }
     }
+
+    //PDF submit
+    const handleFileSubmit = async () => {
+      if (!formData.addressProof) {
+        alert("Please upload a valid PDF file.");
+        return;
+      }
+    
+      const fileData = new FormData();
+      const userId = localStorage.getItem("user_id"); // Retrieve user_id dynamically from localStorage
+      const loanId = "1234567890"; // Replace this with the actual loan ID logic or variable if available
+    
+      fileData.append("document", formData.addressProof); // Append the uploaded file
+      fileData.append("user_id", userId); // Include user_id
+      fileData.append("loan_id", loanId); // Include loan_id
+      fileData.append("document_type", "Proof of Address");
+    
+      try {
+        const token = localStorage.getItem("jwt_token"); // Retrieve JWT token
+        const response = await axios.post("http://localhost:8001/api/upload", fileData, {
+          headers: {
+            "Authorization": `Bearer ${token}`, // Authorization header
+            "Content-Type": "multipart/form-data", // Required for file upload
+          },
+        });
+        alert("File uploaded successfully!");
+        console.log("Backend response:", response.data);
+      } catch (error) {
+        console.error("Error uploading file:", error.response || error);
+        alert("Error uploading file. Please try again.");
+      }
+    };
+    
   };
   return (
     <MDBContainer>
-      <Header />
+      <Header /> 
+      {loading ? ( // Show loader if loading
+        <Loader />
+      ) : (
+        <>
       <div
         className="text-center bg-image"
         style={{
@@ -406,6 +453,8 @@ function LoanApplicationForm() {
           </form>
         </MDBCardBody>
       </MDBCard>
+      </>
+      )}
     </MDBContainer>
   );
 }
