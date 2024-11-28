@@ -140,7 +140,7 @@ function LoanLandingPage() {
 
       {/* Enhanced Hero Section */}
       <MDBContainer fluid className="p-5" style={{ 
-        background: 'linear-gradient(135deg, #1266f1 0%, #0d47a1 100%)',
+        background: 'linear-gradient(135deg, #1266f1 10%, #0d47a1 100%)',
         color: 'white'
       }}>
         <MDBRow className="justify-content-center align-items-center">
@@ -210,7 +210,7 @@ function LoanLandingPage() {
         <MDBRow className="justify-content-center text-center g-4">
           {[
             { number: '10K+', text: 'Happy Customers' },
-            { number: '$50M+', text: 'Loans Disbursed' },
+            { number: '50M+', text: 'Loans Disbursed' },
             { number: '4.9/5', text: 'Customer Rating' },
             { number: '24/7', text: 'Customer Support' }
           ].map((stat, index) => (
