@@ -11,18 +11,10 @@ import {
   MDBCol,
   MDBIcon,
   MDBInput,
-  MDBTypography,
-  MDBTabs,
-  MDBTabsItem,
-  MDBTabsLink,
-  MDBTabsContent,
-  MDBTabsPane,
-  MDBSpinner
 } from 'mdb-react-ui-kit';
 
 function Register() {
-  const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('personal');
+  const navigate = useNavigate(); // For navigation
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -35,95 +27,58 @@ function Register() {
     confirmPassword: '',
   });
 
-  const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
-
-  // Handle tab change
-  const handleTabClick = (tab) => {
-    if (activeTab !== tab) {
-      if (tab === 'account' && !validatePersonalInfo()) {
-        // Don't switch tabs if personal info validation fails
-        return;
-      }
-      setActiveTab(tab);
-    }
-  };
-
-  // Validate personal information
-  const validatePersonalInfo = () => {
-    let newErrors = {};
-    
-    if (!formData.firstName) newErrors.firstName = 'First name is required';
-    if (!formData.lastName) newErrors.lastName = 'Last name is required';
-    if (!formData.gender) newErrors.gender = 'Gender selection is required';
-    if (!formData.email) {
-      newErrors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
-    }
-    if (!formData.mobile) {
-      newErrors.mobile = 'Mobile number is required';
-    } else if (!/^\d{10}$/.test(formData.mobile)) {
-      newErrors.mobile = 'Mobile number must be 10 digits';
-    }
-    if (!formData.dob) newErrors.dob = 'Date of birth is required';
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  // Validate account information
-  const validateAccountInfo = () => {
-    let newErrors = {};
-    
-    if (!formData.username) newErrors.username = 'Username is required';
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters long';
-    }
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'Please confirm your password';
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false); // Loading state
 
   // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    
-    // Clear the specific error when user types
-    if (errors[name]) {
-      setErrors({ ...errors, [name]: '' });
-    }
-  };
-
-  // Handle next button click
-  const handleNextClick = () => {
-    if (validatePersonalInfo()) {
-      setActiveTab('account');
-    }
+    setError(''); // Clear errors on input change
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (activeTab === 'personal') {
-      handleNextClick();
-      return;
-    }
-    
-    if (!validateAccountInfo()) {
+    setError('');
+
+    // Validation checks
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.gender ||
+      !formData.email ||
+      !formData.mobile ||
+      !formData.dob ||
+      !formData.username ||
+      !formData.password ||
+      !formData.confirmPassword
+    ) {
+      setError('Please fill in all fields.');
       return;
     }
 
-    setLoading(true);
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters long.');
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+
+    if (!/^\d{10}$/.test(formData.mobile)) {
+      setError('Mobile number must be 10 digits.');
+      return;
+    }
+
+    setLoading(true); // Show loading animation
 
     try {
       // Send data to the backend
@@ -148,333 +103,194 @@ function Register() {
         Swal.fire({
           icon: 'success',
           title: 'Registration Successful',
-          text: 'Your account has been created successfully!',
-          confirmButtonColor: '#0a58ca',
-          timer: 3000,
+          text: 'You have successfully registered! Redirecting to login page...',
+          showConfirmButton: false,
+          timer: 3000, // Show for 3 seconds
         });
 
         setTimeout(() => {
-          navigate('/');
+          navigate('/'); // Navigate to login page
         }, 3000);
       } else {
-        setErrors({ 
-          submit: data.error || 'Registration failed. Please try again.' 
-        });
+        setError(data.error || 'Registration failed.');
       }
     } catch (err) {
-      setErrors({ 
-        submit: 'An error occurred. Please try again later.' 
-      });
+      setError('An error occurred. Please try again later.');
     } finally {
-      setLoading(false);
+      setLoading(false); // Hide loading animation
     }
   };
 
   return (
-    <MDBContainer className="my-5" style={{ maxWidth: '1000px' }}>
-      <MDBCard className="border-0 shadow-sm">
-        <MDBRow className='g-0'>
-          <MDBCol md='5'>
-            <div className="h-100 d-flex flex-column" 
-              style={{ 
-                background: 'linear-gradient(135deg, #0a58ca, #0d6efd)',
-                borderRadius: '0.5rem 0 0 0.5rem' 
-              }}>
+    <MDBContainer className="my-5" style={{ width: '80%', height: '70%' }}>
+      <MDBCard>
+        <form onSubmit={handleSubmit}>
+          <MDBRow className="g-0">
+            <MDBCol md="6">
               <MDBCardImage
-                src="https://img.freepik.com/free-vector/mobile-login-concept-illustration_114360-135.jpg"
-                alt="Registration"
-                className="p-4 img-fluid"
-                style={{ objectFit: 'contain', maxHeight: '50%' }}
+                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/img2.webp"
+                alt="register form"
+                className="rounded-start w-100"
               />
-              <div className="text-white px-4 pb-5 d-flex flex-column justify-content-end h-100">
-                <MDBTypography tag='h4' className="fw-bold mb-3">Join Loan 360 Today</MDBTypography>
-                <p className="mb-4">
-                  Create your account to access our full range of banking services, 
-                  apply for loans, and manage your financial journey.
-                </p>
-                <ul className="list-unstyled mb-0">
-                  <li className="mb-2">
-                    <MDBIcon fas icon="check-circle" className="me-2" /> Quick application process
-                  </li>
-                  <li className="mb-2">
-                    <MDBIcon fas icon="check-circle" className="me-2" /> Competitive interest rates
-                  </li>
-                  <li>
-                    <MDBIcon fas icon="check-circle" className="me-2" /> 24/7 online account management
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </MDBCol>
+            </MDBCol>
 
-          <MDBCol md='7'>
-            <MDBCardBody className="p-5">
-              <div className="d-flex align-items-center mb-4">
-                <MDBIcon fas icon="user-plus fa-2x me-3" style={{ color: '#0a58ca' }} />
-                <MDBTypography tag='h3' className="fw-bold mb-0">Create an Account</MDBTypography>
-              </div>
+            <MDBCol md="6">
+              <MDBCardBody className="d-flex flex-column">
+                <div className="d-flex flex-row mt-2">
+              {/* <MDBIcon icon="user-plus" size="3x" className="me-3" style={{ color: '#ff6219' }} /> */}
+              <img src="/logo.jpeg" alt="Logo" style={{ height: '45px', marginRight: '10px' }} />
+                  <span className="h1 fw-bold mb-0">Register</span>
+                </div>
 
-              <MDBTabs pills justify className='mb-4'>
-                <MDBTabsItem>
-                  <MDBTabsLink onClick={() => handleTabClick('personal')} active={activeTab === 'personal'}>
-                    <MDBIcon fas icon="user-circle" className="me-2" /> Personal Details
-                  </MDBTabsLink>
-                </MDBTabsItem>
-                <MDBTabsItem>
-                  <MDBTabsLink onClick={() => handleTabClick('account')} active={activeTab === 'account'}>
-                    <MDBIcon fas icon="lock" className="me-2" /> Account Setup
-                  </MDBTabsLink>
-                </MDBTabsItem>
-              </MDBTabs>
+                <h5 className="fw-normal my-4 pb-3" style={{ letterSpacing: '1px' }}>
+                  Create your account
+                </h5>
 
-              <form onSubmit={handleSubmit}>
-                {errors.submit && (
-                  <div className="alert alert-danger" role="alert">
-                    <MDBIcon fas icon="exclamation-circle" className="me-2" />
-                    {errors.submit}
+                {error && <p style={{ color: 'red' }}>{error}</p>}
+
+                {loading && (
+                  <div className="text-center my-3">
+                    <div className="spinner-border" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
                   </div>
                 )}
 
-                <MDBTabsContent>
-                  <MDBTabsPane show={activeTab === 'personal'}>
-                    <MDBRow className="g-3">
-                      <MDBCol md="6">
-                        <MDBInput
-                          label="First Name"
-                          id="firstName"
-                          name="firstName"
-                          type="text"
-                          value={formData.firstName}
-                          onChange={handleInputChange}
-                          required
-                          className={errors.firstName ? 'is-invalid' : ''}
-                        />
-                        {errors.firstName && (
-                          <div className="invalid-feedback">{errors.firstName}</div>
-                        )}
-                      </MDBCol>
-                      <MDBCol md="6">
-                        <MDBInput
-                          label="Last Name"
-                          id="lastName"
-                          name="lastName"
-                          type="text"
-                          value={formData.lastName}
-                          onChange={handleInputChange}
-                          required
-                          className={errors.lastName ? 'is-invalid' : ''}
-                        />
-                        {errors.lastName && (
-                          <div className="invalid-feedback">{errors.lastName}</div>
-                        )}
-                      </MDBCol>
+                <MDBInput
+                  wrapperClass="mb-4"
+                  label="First Name"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                  type="text"
+                  size="lg"
+                />
+                <MDBInput
+                  wrapperClass="mb-4"
+                  label="Last Name"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                  type="text"
+                  size="lg"
+                />
 
-                      <MDBCol md="12">
-                        <div className="mt-3 mb-2">
-                          <label className="form-label">Gender</label>
-                          <div className="d-flex gap-4">
-                            <div className="form-check">
-                              <input
-                                className="form-check-input"
-                                type="radio"
-                                name="gender"
-                                id="male"
-                                value="Male"
-                                checked={formData.gender === 'Male'}
-                                onChange={handleInputChange}
-                              />
-                              <label className="form-check-label" htmlFor="male">
-                                Male
-                              </label>
-                            </div>
-                            <div className="form-check">
-                              <input
-                                className="form-check-input"
-                                type="radio"
-                                name="gender"
-                                id="female"
-                                value="Female"
-                                checked={formData.gender === 'Female'}
-                                onChange={handleInputChange}
-                              />
-                              <label className="form-check-label" htmlFor="female">
-                                Female
-                              </label>
-                            </div>
-                            <div className="form-check">
-                              <input
-                                className="form-check-input"
-                                type="radio"
-                                name="gender"
-                                id="other"
-                                value="Other"
-                                checked={formData.gender === 'Other'}
-                                onChange={handleInputChange}
-                              />
-                              <label className="form-check-label" htmlFor="other">
-                                Other
-                              </label>
-                            </div>
-                          </div>
-                          {errors.gender && (
-                            <div className="text-danger small">{errors.gender}</div>
-                          )}
-                        </div>
-                      </MDBCol>
-
-                      <MDBCol md="6">
-                        <MDBInput
-                          label="Email Address"
-                          id="email"
-                          name="email"
-                          type="email"
-                          value={formData.email}
-                          onChange={handleInputChange}
-                          required
-                          className={errors.email ? 'is-invalid' : ''}
-                        />
-                        {errors.email && (
-                          <div className="invalid-feedback">{errors.email}</div>
-                        )}
-                      </MDBCol>
-                      <MDBCol md="6">
-                        <MDBInput
-                          label="Mobile Number"
-                          id="mobile"
-                          name="mobile"
-                          type="tel"
-                          value={formData.mobile}
-                          onChange={handleInputChange}
-                          required
-                          className={errors.mobile ? 'is-invalid' : ''}
-                        />
-                        {errors.mobile && (
-                          <div className="invalid-feedback">{errors.mobile}</div>
-                        )}
-                      </MDBCol>
-                      <MDBCol md="6">
-                        <MDBInput
-                          label="Date of Birth"
-                          id="dob"
-                          name="dob"
-                          type="date"
-                          value={formData.dob}
-                          onChange={handleInputChange}
-                          required
-                          className={errors.dob ? 'is-invalid' : ''}
-                        />
-                        {errors.dob && (
-                          <div className="invalid-feedback">{errors.dob}</div>
-                        )}
-                      </MDBCol>
-                    </MDBRow>
-
-                    <div className="d-flex justify-content-end mt-4">
-                      <MDBBtn 
-                        onClick={handleNextClick}
-                        style={{ 
-                          background: 'linear-gradient(to right, #0a58ca, #0d6efd)',
-                          boxShadow: '0 4px 8px rgba(10, 88, 202, 0.2)',
-                        }}
-                      >
-                        Next <MDBIcon fas icon="arrow-right" className="ms-2" />
-                      </MDBBtn>
+                <div className="mb-4">
+                  <h6 className="fw-normal mb-2">Gender</h6>
+                  <div>
+                    <div className="form-check form-check-inline">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="gender"
+                        value="Male"
+                        checked={formData.gender === 'Male'}
+                        onChange={handleInputChange}
+                      />
+                      <label className="form-check-label">Male</label>
                     </div>
-                  </MDBTabsPane>
-
-                  <MDBTabsPane show={activeTab === 'account'}>
-                    <MDBRow className="g-3">
-                      <MDBCol md="12">
-                        <MDBInput
-                          label="Username"
-                          id="username"
-                          name="username"
-                          type="text"
-                          value={formData.username}
-                          onChange={handleInputChange}
-                          required
-                          className={errors.username ? 'is-invalid' : ''}
-                        />
-                        {errors.username && (
-                          <div className="invalid-feedback">{errors.username}</div>
-                        )}
-                      </MDBCol>
-                      <MDBCol md="6">
-                        <MDBInput
-                          label="Password"
-                          id="password"
-                          name="password"
-                          type="password"
-                          value={formData.password}
-                          onChange={handleInputChange}
-                          required
-                          className={errors.password ? 'is-invalid' : ''}
-                        />
-                        {errors.password && (
-                          <div className="invalid-feedback">{errors.password}</div>
-                        )}
-                      </MDBCol>
-                      <MDBCol md="6">
-                        <MDBInput
-                          label="Confirm Password"
-                          id="confirmPassword"
-                          name="confirmPassword"
-                          type="password"
-                          value={formData.confirmPassword}
-                          onChange={handleInputChange}
-                          required
-                          className={errors.confirmPassword ? 'is-invalid' : ''}
-                        />
-                        {errors.confirmPassword && (
-                          <div className="invalid-feedback">{errors.confirmPassword}</div>
-                        )}
-                      </MDBCol>
-                    </MDBRow>
-
-                    <div className="d-flex mt-4">
-                      <MDBBtn 
-                        color="light"
-                        className="me-2"
-                        onClick={() => setActiveTab('personal')}
-                      >
-                        <MDBIcon fas icon="arrow-left" className="me-2" /> Back
-                      </MDBBtn>
-                      <MDBBtn 
-                        type="submit" 
-                        disabled={loading}
-                        style={{ 
-                          background: 'linear-gradient(to right, #0a58ca, #0d6efd)',
-                          boxShadow: '0 4px 8px rgba(10, 88, 202, 0.2)',
-                        }}
-                      >
-                        {loading ? (
-                          <MDBSpinner size="sm" role="status" tag="span" className="me-2" />
-                        ) : (
-                          <MDBIcon fas icon="user-plus" className="me-2" />
-                        )}
-                        Register
-                      </MDBBtn>
+                    <div className="form-check form-check-inline">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="gender"
+                        value="Female"
+                        checked={formData.gender === 'Female'}
+                        onChange={handleInputChange}
+                      />
+                      <label className="form-check-label">Female</label>
                     </div>
-                  </MDBTabsPane>
-                </MDBTabsContent>
-              </form>
+                    <div className="form-check form-check-inline">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="gender"
+                        value="Other"
+                        checked={formData.gender === 'Other'}
+                        onChange={handleInputChange}
+                      />
+                      <label className="form-check-label">Other</label>
+                    </div>
+                  </div>
+                </div>
 
-              <div className="mt-4 text-center">
-                <p>
+                <MDBInput
+                  wrapperClass="mb-4"
+                  label="Email Address"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  type="email"
+                  size="lg"
+                />
+                <MDBInput
+                  wrapperClass="mb-4"
+                  label="Mobile Number"
+                  name="mobile"
+                  value={formData.mobile}
+                  onChange={handleInputChange}
+                  type="text"
+                  size="lg"
+                />
+                <MDBInput
+                  wrapperClass="mb-4"
+                  label="Date of Birth"
+                  name="dob"
+                  value={formData.dob}
+                  onChange={handleInputChange}
+                  type="date"
+                  size="lg"
+                />
+                <MDBInput
+                  wrapperClass="mb-4"
+                  label="Username"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleInputChange}
+                  type="text"
+                  size="lg"
+                />
+                <MDBInput
+                  wrapperClass="mb-4"
+                  label="Password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  type="password"
+                  size="lg"
+                />
+                <MDBInput
+                  wrapperClass="mb-4"
+                  label="Confirm Password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  type="password"
+                  size="lg"
+                />
+
+                <MDBBtn className="mb-4 px-5" color="dark" size="lg" type="submit" disabled={loading}>
+                  Register
+                </MDBBtn>
+                <p className="mb-5 pb-lg-2" style={{ color: '#393f81' }}>
                   Already have an account?{' '}
-                  <Link to="/" style={{ color: '#0a58ca', fontWeight: 'bold' }}>
-                    Sign In
+                  <Link to="/login" style={{ color: '#393f81' }}>
+                    Login here
                   </Link>
                 </p>
-                <p className="text-muted small mt-3">
-                  By registering, you agree to our{' '}
-                  <a href="#!" className="text-muted fw-bold">Terms of Service</a> and{' '}
-                  <a href="#!" className="text-muted fw-bold">Privacy Policy</a>
-                </p>
-              </div>
-            </MDBCardBody>
-          </MDBCol>
-        </MDBRow>
+
+                <div className="d-flex flex-row justify-content-start">
+                  <a href="#!" className="small text-muted me-1">
+                    Terms of use
+                  </a>
+                  <a href="#!" className="small text-muted">
+                    Privacy policy
+                  </a>
+                </div>
+              </MDBCardBody>
+            </MDBCol>
+          </MDBRow>
+        </form>
       </MDBCard>
     </MDBContainer>
   );

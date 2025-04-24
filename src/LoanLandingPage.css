@@ -324,6 +324,7 @@ body {
     flex-direction: column;
     height: 400px;
     max-height: 80vh;
+    z-index: 1000;
   }
   
   .chat-header {
@@ -355,8 +356,8 @@ body {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: flex-start;
   }
   
   .chat-welcome-text {
@@ -399,3 +400,111 @@ body {
     border-color: #007bff;
     outline: none;
   }
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Footer Styling */
+.footer-gradient {
+  background-image: linear-gradient(to bottom, #1e40af, #1e3a8a);
+}
+
+.footer-link {
+  transition: all 0.3s ease;
+}
+
+.footer-link:hover {
+  transform: translateX(5px);
+}
+
+.social-icon {
+  transition: all 0.3s ease;
+}
+
+.social-icon:hover {
+  transform: scale(1.1) rotate(6deg);
+}
+
+/* Enhanced Chat Styling */
+.chat-bubble-assistant {
+  background-color: #f0f7ff;
+  border-radius: 18px 18px 18px 4px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  max-width: 80%;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  position: relative;
+  animation: slideInLeft 0.3s ease-out forwards;
+}
+
+.chat-bubble-user {
+  background-color: #1e40af;
+  color: white;
+  border-radius: 18px 18px 4px 18px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  margin-left: auto;
+  max-width: 80%;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  position: relative;
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.chat-button {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(30, 64, 175, 0.4);
+  transition: all 0.3s ease;
+  z-index: 999;
+}
+
+.chat-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 15px rgba(30, 64, 175, 0.5);
+}
