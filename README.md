@@ -1,2 +1,3 @@
 # Quick-Loan-Client
-Nethmini's part
+
+Client Part
