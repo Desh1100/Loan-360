@@ -1,3 +1,3 @@
-# Quick-Loan-Client
+# Loan 360
 
 Client Part
