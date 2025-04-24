@@ -145,7 +145,7 @@ function LoanLandingPage() {
       }}>
         <MDBRow className="justify-content-center align-items-center">
           <MDBCol md="6" className="text-center">
-            <h1 className="display-4 fw-bold mb-4">Welcome to QuickLoan</h1>
+            <h1 className="display-4 fw-bold mb-4">Welcome to Loan 360</h1>
             <p className="lead mb-4">Your trusted partner for easy and reliable bank loans. Apply for a loan today and achieve your dreams with us.</p>
             <MDBBtn size="lg" style={{
               background: 'white',
@@ -227,7 +227,7 @@ function LoanLandingPage() {
         <MDBContainer className="p-4">
           <MDBRow>
             <MDBCol lg="3" md="6" className="mb-4 mb-md-0">
-              <h5 className="fw-bold mb-4">BankLoanApp</h5>
+              <h5 className="fw-bold mb-4">Loan 360</h5>
               <p>Your trusted partner for all loan solutions.</p>
             </MDBCol>
 
@@ -251,11 +251,11 @@ function LoanLandingPage() {
               <ul className="list-unstyled mb-0">
                 <li className="mb-2">
                   <MDBIcon fas icon="envelope" className="me-2" />
-                  support@bankloanapp.com
+                  support@loan360.com
                 </li>
                 <li className="mb-2">
                   <MDBIcon fas icon="phone" className="me-2" />
-                  1-800-LOAN-APP
+                  1-800-LOAN-360
                 </li>
               </ul>
             </MDBCol>
@@ -288,7 +288,7 @@ function LoanLandingPage() {
         </MDBContainer>
 
         <div className="text-center p-3" style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)' }}>
-          © 2024 BankLoanApp. All Rights Reserved.
+          © 2024 Loan 360. All Rights Reserved.
         </div>
       </MDBFooter>
 
