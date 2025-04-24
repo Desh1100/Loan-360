@@ -38,7 +38,7 @@ function LoanLandingPage() {
               <div style={{ maxWidth: '400px' }}>
                 <div className="mb-4">
                   <p className="mb-1 fw-semibold">Fill out the application in 5 minutes.</p>
-                  <p className="mb-0 fw-semibold">Get the money within an hour</p>
+                  <p className="mb-0 fw-semibold">Get the money </p>
                 </div>
                 
                 <a 
@@ -265,23 +265,24 @@ function LoanLandingPage() {
         <div className="container">
           <div className="row mb-4">
             <div className="col-lg-3 col-md-6 mb-4 mb-md-0">
-              <div className="d-flex align-items-center mb-3">
+              <h5 className="mb-3 text-start">Contact Us</h5>
+              <div className="d-flex  mb-3 text-start">
                 <i className="fas fa-phone-alt me-2"></i>
                 <span>117750300</span>
               </div>
-              <div className="d-flex align-items-center mb-3">
+              <div className="d-flex align-items-center mb-3 text-start">
                 <i className="fas fa-envelope me-2"></i>
                 <span>support@loan360.lk</span>
               </div>
-              <div className="d-flex align-items-center">
+              <div className="d-flex align-items-center text-start">
                 <i className="fas fa-clock me-2"></i>
                 <span>Mon - Sun: 8.30am to 5.30pm</span>
               </div>
             </div>
             
             <div className="col-lg-3 col-md-6 mb-4 mb-md-0">
-              <h5 className="mb-3">Company</h5>
-              <ul className="list-unstyled">
+              <h5 className="mb-3 text-start">Company</h5>
+              <ul className="list-unstyled text-start">
                 <li className="mb-2"><a href="#!" className="text-white text-decoration-none">About</a></li>
                 <li className="mb-2"><a href="#!" className="text-white text-decoration-none">Documents</a></li>
                 <li className="mb-2"><a href="#!" className="text-white text-decoration-none">Contacts</a></li>
@@ -289,8 +290,8 @@ function LoanLandingPage() {
             </div>
             
             <div className="col-lg-3 col-md-6 mb-4 mb-md-0">
-              <h5 className="mb-3">Customer</h5>
-              <ul className="list-unstyled">
+              <h5 className="mb-3 text-start">Customer</h5>
+              <ul className="list-unstyled text-start">
                 <li className="mb-2"><a href="#!" className="text-white text-decoration-none">Upload your payment</a></li>
                 <li className="mb-2"><a href="#!" className="text-white text-decoration-none">FAQs</a></li>
                 <li className="mb-2"><a href="#!" className="text-white text-decoration-none">How to get a loan</a></li>
@@ -299,8 +300,8 @@ function LoanLandingPage() {
             </div>
             
             <div className="col-lg-3 col-md-6 mb-4 mb-md-0">
-              <h5 className="mb-3">Social</h5>
-              <ul className="list-unstyled">
+              <h5 className="mb-3 text-start">Social</h5>
+              <ul className="list-unstyled text-start">
                 <li className="mb-2"><a href="#!" className="text-white text-decoration-none">Facebook</a></li>
                 <li className="mb-2"><a href="#!" className="text-white text-decoration-none">Instagram</a></li>
                 <li className="mb-2"><a href="#!" className="text-white text-decoration-none">Twitter</a></li>
@@ -311,7 +312,7 @@ function LoanLandingPage() {
           <hr style={{ backgroundColor: colors.white, opacity: 0.2 }} />
           
           <div className="row py-3">
-            <div className="col-12 text-center">
+            <div className="col-12 text-start">
               <p className="small mb-0">
                 © 2022 - {new Date().getFullYear()} All rights reserved
               </p>
