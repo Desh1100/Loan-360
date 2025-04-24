@@ -156,8 +156,8 @@ function LoanApplicationForm() {
     //PDF submit
     const handleFileSubmit = async () => {
       if (!formData.addressProof) {
-        alert("Please upload a valid PDF file.");
-        return;
+      alert("Please upload a valid PDF file.");
+      return;
       }
     
       const fileData = new FormData();
@@ -170,20 +170,22 @@ function LoanApplicationForm() {
       fileData.append("document_type", "Proof of Address");
     
       try {
-        const token = localStorage.getItem("jwt_token"); // Retrieve JWT token
-        const response = await axios.post("http://localhost:8001/api/upload", fileData, {
-          headers: {
-            "Authorization": `Bearer ${token}`, // Authorization header
-            "Content-Type": "multipart/form-data", // Required for file upload
-          },
-        });
-        alert("File uploaded successfully!");
-        console.log("Backend response:", response.data);
+      const token = localStorage.getItem("jwt_token"); // Retrieve JWT token
+      const response = await axios.post("http://localhost:8001/api/upload", fileData, {
+        headers: {
+        "Authorization": `Bearer ${token}`, // Authorization header
+        "Content-Type": "multipart/form-data", // Required for file upload
+        },
+      });
+      alert("File uploaded successfully!");
+      console.log("Backend response:", response.data);
       } catch (error) {
-        console.error("Error uploading file:", error.response || error);
-        alert("Error uploading file. Please try again.");
+      console.error("Error uploading file:", error.response || error);
+      alert("Error uploading file. Please try again.");
       }
     };
+
+    handleFileSubmit(); // Call the function to submit the PDF
     
   };
   return (
