@@ -203,7 +203,7 @@ function LoanApplicationForm() {
           height: '200px',
         }}
       >
-        <div className="mask" style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}>
+        <div className="mask" style={{ backgroundColor: 'rgba(1, 91, 89, 0.7)' }}>
           <div className="d-flex justify-content-center align-items-center h-100">
             <div className="text-white">
               <h1 className="mb-3">
@@ -449,8 +449,13 @@ function LoanApplicationForm() {
             )}
 
             <div className="d-flex justify-content-between">
-              {step === 1 && <MDBBtn color="primary" onClick={nextStep}>Next</MDBBtn>}
-              {step === 2 && <MDBBtn color="success" type="submit">Submit</MDBBtn>}
+              {step === 1 && <MDBBtn style={{ backgroundColor: '#005a76' }} onClick={nextStep}>Next</MDBBtn>}
+              {step === 2 && (
+                <>
+                  <MDBBtn style={{ backgroundColor: '#015b59' }} onClick={prevStep}>Previous</MDBBtn>
+                  <MDBBtn style={{ backgroundColor: '#ff7300' }} type="submit">Submit</MDBBtn>
+                </>
+              )}
             </div>
           </form>
         </MDBCardBody>

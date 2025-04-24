@@ -21,16 +21,30 @@ const Header = () => {
     navigate('/');
   };
 
+  // New modern design color theme
+  const colors = {
+    primary: '#015b59', // Cyan/teal
+    secondary: '#005a76', // Darker teal
+    accent: '#ff7300', // Orange
+    background: '#e9f8fb', // Light cyan background
+    text: '#333333', // Dark text
+    white: '#ffffff', // White
+  };
+
   return (
-    <header className="custom-header">
+    <header className="custom-header" style={{ 
+      backgroundColor: colors.white, 
+      boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+      padding: '12px 0'
+    }}>
       <div className="header-container">
-        <Link to="/Landing" className="logo">
+        <Link to="/" className="logo">
           <div className="logo-icon">
-            <img src="/logo.jpeg" alt="Loan 360 Logo" style={{ width: '70px', height: 'auto' }} />
+            <img src="/logo.jpeg" alt="Loan 360 Logo" style={{ width: '50px', height: 'auto' }} />
           </div>
-          <div className="logo-text" style={{ top: '10px' }}>
-            <span className="logo-title">Loan 360</span>
-            <span className="logo-subtitle">Banking Solutions</span>
+          <div className="logo-text">
+            <span className="logo-title" style={{ color: colors.primary, fontWeight: '700' }}>Loan 360</span>
+            <span className="logo-subtitle" style={{ color: colors.secondary, fontSize: '0.7rem' }}>Banking Solutions</span>
           </div>
         </Link>
 
@@ -39,35 +53,61 @@ const Header = () => {
           aria-expanded={showNav ? 'true' : 'false'} 
           aria-label='Toggle navigation'
           onClick={() => setShowNav(!showNav)}
+          style={{ color: colors.text }}
         >
           <i className="fas fa-bars"></i>
         </button>
 
         <nav className={`main-nav ${showNav ? 'show' : ''}`}>
-          <ul className="nav-links">
+          <ul className="nav-links" style={{ gap: '30px' }}>
             <li className="nav-item">
-              <Link to="/Landing" className="nav-link">Home</Link>
+              <Link to="/" className="nav-link" style={{ color: colors.text, fontWeight: '500' }}>About</Link>
             </li>
             <li className="nav-item">
-              <Link to="#" className="nav-link">Products</Link>
+              <Link to="#" className="nav-link" style={{ color: colors.text, fontWeight: '500' }}>Payments</Link>
             </li>
             <li className="nav-item">
-              <Link to="#" className="nav-link">Services</Link>
+              <Link to="#" className="nav-link" style={{ color: colors.text, fontWeight: '500' }}>How to</Link>
             </li>
             <li className="nav-item">
-              <Link to="/PersonalInfo" className="nav-link">Apply Now</Link>
+              <Link to="#" className="nav-link" style={{ color: colors.text, fontWeight: '500' }}>FAQs</Link>
+            </li>
+            <li className="nav-item">
+              <Link to="#" className="nav-link" style={{ color: colors.text, fontWeight: '500' }}>Contact us</Link>
             </li>
             
             {isLoggedIn ? (
               <li className="nav-item">
-                <button onClick={handleLogout} className="auth-button logout-button">
-                  <i className="fas fa-sign-out-alt"></i> Logout
+                <button 
+                  onClick={handleLogout} 
+                  className="auth-button logout-button"
+                  style={{
+                    backgroundColor: colors.accent,
+                    color: colors.white,
+                    borderRadius: '5px',
+                    padding: '8px 16px',
+                    fontWeight: '600',
+                    border: 'none'
+                  }}
+                >
+                  Logout
                 </button>
               </li>
             ) : (
               <li className="nav-item">
-                <Link to="/login" className="auth-button login-button">
-                  <i className="fas fa-sign-in-alt"></i> Login
+                <Link 
+                  to="/login" 
+                  className="auth-button login-button"
+                  style={{
+                    backgroundColor: colors.accent,
+                    color: colors.white,
+                    borderRadius: '5px',
+                    padding: '8px 16px',
+                    fontWeight: '600',
+                    textDecoration: 'none'
+                  }}
+                >
+                  Login
                 </Link>
               </li>
             )}

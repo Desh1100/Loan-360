@@ -131,18 +131,21 @@ function Register() {
                 src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/img2.webp"
                 alt="register form"
                 className="rounded-start w-100"
+                style={{ 
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center'
+                }}
               />
             </MDBCol>
 
             <MDBCol md="6">
               <MDBCardBody className="d-flex flex-column">
                 <div className="d-flex flex-row mt-2">
-              {/* <MDBIcon icon="user-plus" size="3x" className="me-3" style={{ color: '#ff6219' }} /> */}
-              <img src="/logo.jpeg" alt="Logo" style={{ height: '45px', marginRight: '10px' }} />
-                  <span className="h1 fw-bold mb-0">Register</span>
+                  <img src="/logo.jpeg" alt="Logo" style={{ height: '45px', marginRight: '10px' }} />
+                  <span className="h1 fw-bold mb-0" style={{ color: '#015b59' }}>Register</span>
                 </div>
 
-                <h5 className="fw-normal my-4 pb-3" style={{ letterSpacing: '1px' }}>
+                <h5 className="fw-normal my-4 pb-3" style={{ letterSpacing: '1px', color: '#005a76' }}>
                   Create your account
                 </h5>
 
@@ -150,7 +153,7 @@ function Register() {
 
                 {loading && (
                   <div className="text-center my-3">
-                    <div className="spinner-border" role="status">
+                    <div className="spinner-border" style={{ color: '#005a76' }} role="status">
                       <span className="visually-hidden">Loading...</span>
                     </div>
                   </div>
@@ -269,12 +272,15 @@ function Register() {
                   size="lg"
                 />
 
-                <MDBBtn className="mb-4 px-5" color="dark" size="lg" type="submit" disabled={loading}>
+                <MDBBtn className="mb-4 px-5" size="lg" type="submit" disabled={loading} style={{ 
+                    backgroundColor: '#ff7300',
+                    borderColor: '#ff7300' 
+                  }}>
                   Register
                 </MDBBtn>
-                <p className="mb-5 pb-lg-2" style={{ color: '#393f81' }}>
+                <p className="mb-5 pb-lg-2" style={{ color: '#005a76' }}>
                   Already have an account?{' '}
-                  <Link to="/login" style={{ color: '#393f81' }}>
+                  <Link to="/login" style={{ color: '#015b59', fontWeight: 'bold' }}>
                     Login here
                   </Link>
                 </p>

@@ -79,11 +79,11 @@ function Login() {
           <MDBCol md="6">
             <div className="h-100 d-flex flex-column" 
               style={{ 
-                background: 'linear-gradient(135deg, #0a58ca, #0d6efd)',
+                background: `linear-gradient(135deg, #015b59, #005a76)`,
                 borderRadius: '0.5rem 0 0 0.5rem' 
               }}>
               <MDBCardImage
-                src="https://img.freepik.com/free-vector/online-banking-concept-illustration_114360-5238.jpg"
+                src="https://img.freepik.com/free-vector/login-concept-illustration_114360-757.jpg?t=st=1745510253~exp=1745513853~hmac=396a6f66a48d20350dab91711825a0f0547eacdfe849e9ee38f454fbdabf1e26&w=740"
                 alt="Login"
                 className="p-4 img-fluid"
                 style={{ objectFit: 'contain', maxHeight: '60%' }}
@@ -107,6 +107,18 @@ function Login() {
 
           <MDBCol md="6">
             <MDBCardBody className="d-flex flex-column p-5">
+              <div className="d-flex justify-content-start mb-3">
+                <MDBBtn 
+                  color="light"
+                  className="shadow-0"
+                  onClick={() => navigate('/')}
+                  style={{ padding: '8px 16px' }}
+                >
+                  <MDBIcon fas icon="arrow-left" className="me-2" />
+                  Back to Home
+                </MDBBtn>
+              </div>
+              
               <div className="text-center mb-4">
               <img 
                 src="/logo.jpeg" 

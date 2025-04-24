@@ -1,21 +1,4 @@
 import React, { useState } from 'react';
-import {
-  MDBContainer,
-  MDBFooter,
-  MDBBtn,
-  MDBCarousel,
-  MDBCarouselItem,
-  MDBRow,
-  MDBCol,
-  MDBIcon,
-  MDBCard,
-  MDBCardBody,
-  MDBCardTitle,
-  MDBCardText,
-
-} from 'mdb-react-ui-kit';
-
-import FeaturesSection from '../components/ui/FeaturesSection';
 import ChatIcon from '../components/ui/ChatIcon';
 import ChatWindow from '../components/ui/ChatWindow';
 import '../LoanLandingPage.css';
@@ -23,274 +6,319 @@ import Header from '../components/ui/Header';
 
 function LoanLandingPage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('personal');
-
-  const loanTypes = [
-    { id: 'personal', name: 'Personal Loan', icon: 'user', rate: '8.99%' },
-    { id: 'home', name: 'Home Loan', icon: 'home', rate: '6.49%' },
-    { id: 'business', name: 'Business Loan', icon: 'briefcase', rate: '10.99%' }
-  ];
+  const [loanAmount, setLoanAmount] = useState(25000);
+  
+  // New modern design color theme
+  const colors = {
+    primary: '#015b59', // Cyan/teal
+    secondary: '#005a76', // Darker teal
+    accent: '#ff7300', // Orange
+    background: '#e9f8fb', // Light cyan background
+    text: '#333333', // Dark text
+    white: '#ffffff', // White
+  };
 
   return (
-    <div style={{ backgroundColor: '#f8f9fa' }}>
+    <div style={{ backgroundColor: colors.background }}>
       <Header />
-
-              {/* Enhanced Carousel Section */}
-        <MDBCarousel
-          showControls
-          showIndicators
-          fade
-          interval={3000}
-          style={{
-            maxHeight: '600px',
-            overflow: 'hidden',
-            position: 'relative',
-          }}
-        >
-          <MDBCarouselItem itemId={1}>
-            <img
-              src="https://infomineo.com/wp-content/uploads/2022/06/virtual-credit-card_infomineo-scaled.jpg"
-              className="d-block w-100"
-              alt="First slide"
-              style={{
-                objectFit: 'cover',
-                height: '600px',
-                width: '100%',
-                backgroundColor: 'rgba(0, 0, 0, 0.7)', // semi-transparent black overlay
-              }}
-            />
-            <div
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                textAlign: 'center',
-                color: 'white',
-                textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
-               
-                zIndex: 1, // ensures text is above the image
-              }}
-            >
-              <h2 className="display-4 fw-bold">Personal Loans Made Easy</h2>
-              <p className="lead">Start your journey to financial freedom</p>
+      
+      {/* Hero Section with 0% Interest Banner */}
+      <div style={{ backgroundColor: colors.primary, position: 'relative', overflow: 'hidden', padding: '40px 0' }}>
+        <div className="container">
+          <div className="row align-items-center">
+            <div className="col-md-7 text-white pe-5">
+              <div className="mb-4">
+                <h1 className="display-1 fw-bold" style={{ color: colors.accent }}>0%</h1>
+                <h2 className="display-5 fw-bold text-uppercase" style={{ color: colors.accent }}>WITH INTEREST</h2>
+              </div>
+              
+              <h3 className="h3 fw-bold mb-3" style={{ color: colors.white }}>First loan up to</h3>
+              <h2 className="display-6 fw-bold mb-4" style={{ color: colors.white }}>Rs. 20,000</h2>
+              
+              <div style={{ maxWidth: '400px' }}>
+                <div className="mb-4">
+                  <p className="mb-1 fw-semibold">Fill out the application in 5 minutes.</p>
+                  <p className="mb-0 fw-semibold">Get the money within an hour</p>
+                </div>
+                
+                <a 
+                  href="/PersonalInfo"
+                  className="btn rounded-pill px-5 py-3 fw-bold"
+                  style={{ 
+                    backgroundColor: colors.accent,
+                    borderColor: colors.accent,
+                    fontSize: '1.1rem',
+                    color: colors.white
+                  }}
+                >
+                  Apply now
+                </a>
+              </div>
             </div>
-          </MDBCarouselItem>
-
-          <MDBCarouselItem itemId={2}>
-            <img
-              src="https://t4.ftcdn.net/jpg/00/91/05/77/360_F_91057716_HqQb0sbXWBQ1TZzhncrInUGl1Z5P1Co8.jpg"
-              className="d-block w-100"
-              alt="Second slide"
-              style={{
-                objectFit: 'cover',
-                height: '600px',
-                width: '100%',
-                backgroundColor: 'rgba(0, 0, 0, 0.5)', // semi-transparent black overlay
-              }}
-            />
-            <div
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                textAlign: 'center',
-                color: 'white',
-                textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
-                zIndex: 1,
-              }}
-            >
-              <h2 className="display-4 fw-bold">Get the Loan You Need</h2>
-              <p className="lead">Flexible terms and easy repayment options</p>
+            
+            <div className="col-md-5">
+              <div className="position-relative">
+                <img 
+                  src="https://img.freepik.com/free-photo/cheerful-young-couple-using-laptop-together_171337-21517.jpg?w=996&t=st=1714092468~exp=1714093068~hmac=7df78b6c133cc162ab36c701f89fea245eb7e3a6507826fa3c6c8315226699f7" 
+                  alt="Happy couple using financial app"
+                  className="img-fluid rounded"
+                  style={{ maxWidth: '100%' }}
+                />
+                
+                {/* Loan Calculator Card */}
+                <div 
+                  className="card position-absolute shadow"
+                  style={{ 
+                    right: '10px', 
+                    top: '50%', 
+                    transform: 'translateY(-50%)',
+                    maxWidth: '280px',
+                    border: 'none',
+                    borderRadius: '12px'
+                  }}
+                >
+                  
+                </div>
+              </div>
             </div>
-          </MDBCarouselItem>
-
-          <MDBCarouselItem itemId={3}>
-            <img
-              src="https://s3.ap-southeast-1.amazonaws.com/dfcc.lk/wp-content/uploads/2019/06/05095108/Personal-Loans-Landing-Page.jpg"
-              className="d-block w-100"
-              alt="Third slide"
-              style={{
-                objectFit: 'cover',
-                height: '600px',
-                width: '100%',
-                backgroundColor: 'rgba(0, 0, 0, 0.5)', // semi-transparent black overlay
+          </div>
+        </div>
+      </div>
+      
+      {/* Customer Satisfaction Section */}
+      <div className="py-3" style={{ backgroundColor: colors.white }}>
+        <div className="container d-flex justify-content-between align-items-center">
+          <div>
+            <span className="fw-bold">98%</span> of Customers are <span className="fw-bold">very satisfied</span> with <span className="fw-bold">Loan 360</span> services
+          </div>
+          <div>
+            {/* Custom star rating instead of MDBRating */}
+            <div className="star-rating d-flex">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <i key={star} className="fas fa-star" style={{ color: colors.accent, marginRight: '5px' }}></i>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Advantages Section */}
+      <div style={{ backgroundColor: colors.secondary, padding: '40px 0' }}>
+        <div className="container">
+          <h2 className="text-center text-white mb-5">
+            The advantages of using <span style={{ color: colors.accent }}>Loan 360</span> services
+          </h2>
           
-              }}
-            />
-            <div
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                textAlign: 'center',
-                color: 'white',
-                textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
-                zIndex: 1,
-              }}
-            >
-              <h2 className="display-4 fw-bold">Achieve Your Dreams with Us</h2>
-              <p className="lead">Tailored loan solutions to fit your needs</p>
-            </div>
-          </MDBCarouselItem>
-        </MDBCarousel>
-
-
-      {/* Enhanced Hero Section */}
-      <MDBContainer fluid className="p-5" style={{ 
-        background: 'linear-gradient(135deg, #1266f1 10%, #0d47a1 100%)',
-        color: 'white'
-      }}>
-        <MDBRow className="justify-content-center align-items-center">
-          <MDBCol md="6" className="text-center">
-            <h1 className="display-4 fw-bold mb-4">Welcome to Loan 360</h1>
-            <p className="lead mb-4">Your trusted partner for easy and reliable bank loans. Apply for a loan today and achieve your dreams with us.</p>
-            <MDBBtn size="lg" style={{
-              background: 'white',
-              color: '#1266f1',
-              padding: '15px 30px',
-              borderRadius: '30px',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-            }}  href="/PersonalInfo">
-              <MDBIcon fas icon="file-signature" className="me-2" /> Apply Now
-            </MDBBtn>
-          </MDBCol>
-        </MDBRow>
-      </MDBContainer>
-
-      {/* Loan Types Section */}
-      <MDBContainer className="py-5">
-        <h2 className="text-center mb-5 fw-bold">Choose Your Loan Type</h2>
-        <MDBRow className="g-4">
-          {loanTypes.map((loan) => (
-            <MDBCol md="4" key={loan.id}>
-              <MDBCard 
-                className="h-100" 
-                style={{
-                  cursor: 'pointer',
-                  transform: activeTab === loan.id ? 'translateY(-5px)' : 'none',
-                  transition: 'all 0.3s ease',
-                  boxShadow: activeTab === loan.id ? '0 10px 20px rgba(0,0,0,0.1)' : '0 4px 12px rgba(0,0,0,0.05)'
-                }}
-                onClick={() => setActiveTab(loan.id)}
-              >
-                <MDBCardBody className="text-center">
-                  <div className="mb-3">
-                    <MDBIcon 
-                      fas 
-                      icon={loan.icon} 
-                      size="2x" 
-                      style={{
-                        color: '#1266f1',
-                        backgroundColor: '#e3f2fd',
-                        padding: '20px',
-                        borderRadius: '50%'
-                      }}
-                    />
+          <div className="row g-4">
+            {[
+              {
+                icon: "https://img.freepik.com/free-vector/hourglass-concept-illustration_114360-3208.jpg?size=338&ext=jpg&ga=GA1.1.1395880969.1709078400&semt=ais",
+                text: "Get a loan within a few minutes"
+              },
+              {
+                icon: "https://img.freepik.com/free-vector/no-data-concept-illustration_114360-536.jpg?size=338&ext=jpg&ga=GA1.1.1395880969.1709078400&semt=ais",
+                text: "No guarantor or income proof documents are required"
+              },
+              {
+                icon: "https://img.freepik.com/free-vector/work-time-concept-illustration_114360-1474.jpg?size=338&ext=jpg&ga=GA1.1.1395880969.1709078400&semt=ais",
+                text: "Short, convenient and easy 24/7 registration"
+              }
+            ].map((advantage, index) => (
+              <div className="col-md-4" key={index}>
+                <div className="card h-100 shadow-sm" style={{ border: 'none', borderRadius: '10px' }}>
+                  <div className="card-body text-center p-4">
+                    <div className="mb-4" style={{ height: '150px' }}>
+                      <img
+                        src={advantage.icon}
+                        alt={advantage.text}
+                        style={{ maxHeight: '100%', maxWidth: '100%' }}
+                      />
+                    </div>
+                    <p className="text-center">{advantage.text}</p>
                   </div>
-                  <MDBCardTitle>{loan.name}</MDBCardTitle>
-                  <MDBCardText>
-                    Starting from <span className="fw-bold text-primary">{loan.rate}</span> p.a.
-                  </MDBCardText>
-                  <MDBBtn color="primary" outline>Learn More</MDBBtn>
-                </MDBCardBody>
-              </MDBCard>
-            </MDBCol>
-          ))}
-        </MDBRow>
-      </MDBContainer>
-
-      {/* Features Section */}
-      <FeaturesSection />
-
-      {/* Enhanced Stats Section */}
-      <MDBContainer fluid className="py-5" style={{ backgroundColor: '#e3f2fd' }}>
-        <MDBRow className="justify-content-center text-center g-4">
-          {[
-            { number: '10K+', text: 'Happy Customers' },
-            { number: '50M+', text: 'Loans Disbursed' },
-            { number: '4.9/5', text: 'Customer Rating' },
-            { number: '24/7', text: 'Customer Support' }
-          ].map((stat, index) => (
-            <MDBCol md="3" key={index}>
-              <h2 className="fw-bold text-primary mb-2">{stat.number}</h2>
-              <p className="mb-0">{stat.text}</p>
-            </MDBCol>
-          ))}
-        </MDBRow>
-      </MDBContainer>
-
-      {/* Enhanced Footer */}
-      <MDBFooter className="text-white" style={{ backgroundColor: '#0d47a1' }}>
-        <MDBContainer className="p-4">
-          <MDBRow>
-            <MDBCol lg="3" md="6" className="mb-4 mb-md-0">
-              <h5 className="fw-bold mb-4">Loan 360</h5>
-              <p>Your trusted partner for all loan solutions.</p>
-            </MDBCol>
-
-            <MDBCol lg="3" md="6" className="mb-4 mb-md-0">
-              <h5 className="fw-bold mb-4">Quick Links</h5>
-              <ul className="list-unstyled mb-0">
-                <li className="mb-2">
-                  <a href="#!" className="text-white">About Us</a>
-                </li>
-                <li className="mb-2">
-                  <a href="#!" className="text-white">Loan Types</a>
-                </li>
-                <li className="mb-2">
-                  <a href="#!" className="text-white">Calculator</a>
-                </li>
-              </ul>
-            </MDBCol>
-
-            <MDBCol lg="3" md="6" className="mb-4 mb-md-0">
-              <h5 className="fw-bold mb-4">Contact Us</h5>
-              <ul className="list-unstyled mb-0">
-                <li className="mb-2">
-                  <MDBIcon fas icon="envelope" className="me-2" />
-                  support@loan360.com
-                </li>
-                <li className="mb-2">
-                  <MDBIcon fas icon="phone" className="me-2" />
-                  1-800-LOAN-360
-                </li>
-              </ul>
-            </MDBCol>
-
-            <MDBCol lg="3" md="6" className="mb-4 mb-md-0">
-              <h5 className="fw-bold mb-4">Follow Us</h5>
-              <div className="d-flex gap-3">
-                {['facebook', 'twitter', 'linkedin', 'instagram'].map((social) => (
-                  <a 
-                    key={social} 
-                    href={`#${social}`}
-                    style={{
-                      backgroundColor: 'rgba(255,255,255,0.1)',
-                      width: '40px',
-                      height: '40px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderRadius: '50%',
-                      transition: 'all 0.3s ease'
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      
+      {/* Easy and Fast Service Section */}
+      <div style={{ padding: '60px 0', backgroundColor: colors.white }}>
+        <div className="container text-center">
+          <h2 className="mb-5" style={{ color: colors.secondary }}>Easy and fast service!</h2>
+          
+          <div className="row g-4 justify-content-center">
+            {[
+              {
+                icon: "hand-pointer",
+                title: "Select the desired loan amount and fill out the application form"
+              },
+              {
+                icon: "clipboard-check",
+                title: "Get it approved within a few minutes"
+              },
+              {
+                icon: "university",
+                title: "The money will be transferred to your bank account"
+              }
+            ].map((step, index) => (
+              <div className="col-md-4" key={index}>
+                <div className="text-center mb-4">
+                  <div 
+                    className="mx-auto mb-4 d-flex align-items-center justify-content-center rounded-circle"
+                    style={{ 
+                      width: '80px', 
+                      height: '80px', 
+                      backgroundColor: colors.accent,
+                      color: colors.white
                     }}
-                    className="text-white hover-overlay"
                   >
-                    <MDBIcon fab icon={social} />
-                  </a>
+                    <i className={`fas fa-${step.icon} fa-2x`}></i>
+                  </div>
+                  <p>{step.title}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <a 
+            href="/PersonalInfo"
+            className="btn mt-4 rounded-pill px-5 py-3 fw-bold"
+            style={{ 
+              backgroundColor: colors.accent,
+              borderColor: colors.accent,
+              fontSize: '1.1rem',
+              color: colors.white
+            }}
+          >
+            Apply now
+          </a>
+        </div>
+      </div>
+      
+      {/* Who Can Use Section */}
+      <div style={{ backgroundColor: colors.background, padding: '60px 0' }}>
+        <div className="container">
+          <h2 className="mb-5 text-center" style={{ color: colors.secondary }}>
+            Who can use <span>our service?</span>
+          </h2>
+          
+          <div className="row align-items-center">
+            <div className="col-md-6 text-center mb-4 mb-md-0">
+              <img 
+                src="/logo.jpeg" 
+                alt="Loan 360 Logo" 
+                className="img-fluid" 
+                style={{ maxWidth: '250px' }} 
+              />
+            </div>
+            
+            <div className="col-md-6">
+              <div className="row g-4">
+                {[
+                  {
+                    icon: "calendar-alt",
+                    title: "Age",
+                    description: "22 - 60 years old"
+                  },
+                  {
+                    icon: "map-marker-alt",
+                    title: "Location",
+                    description: "Nationwide"
+                  },
+                  {
+                    icon: "briefcase",
+                    title: "Occupation",
+                    description: "Have stable income"
+                  }
+                ].map((requirement, index) => (
+                  <div className="col-md-12" key={index}>
+                    <div className="d-flex align-items-center mb-3">
+                      <div 
+                        className="d-flex align-items-center justify-content-center rounded-circle me-3"
+                        style={{ 
+                          width: '50px', 
+                          height: '50px', 
+                          backgroundColor: colors.accent,
+                          color: colors.white,
+                          flexShrink: 0
+                        }}
+                      >
+                        <i className={`fas fa-${requirement.icon}`}></i>
+                      </div>
+                      <div>
+                        <h6 className="fw-bold mb-0">{requirement.title}</h6>
+                        <p className="mb-0">{requirement.description}</p>
+                      </div>
+                    </div>
+                  </div>
                 ))}
               </div>
-            </MDBCol>
-          </MDBRow>
-        </MDBContainer>
-
-        <div className="text-center p-3" style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)' }}>
-          © 2024 Loan 360. All Rights Reserved.
+            </div>
+          </div>
         </div>
-      </MDBFooter>
+      </div>
+      
+      {/* Footer */}
+      <footer style={{ backgroundColor: colors.secondary, color: colors.white, padding: '40px 0 0' }}>
+        <div className="container">
+          <div className="row mb-4">
+            <div className="col-lg-3 col-md-6 mb-4 mb-md-0">
+              <div className="d-flex align-items-center mb-3">
+                <i className="fas fa-phone-alt me-2"></i>
+                <span>117750300</span>
+              </div>
+              <div className="d-flex align-items-center mb-3">
+                <i className="fas fa-envelope me-2"></i>
+                <span>support@loan360.lk</span>
+              </div>
+              <div className="d-flex align-items-center">
+                <i className="fas fa-clock me-2"></i>
+                <span>Mon - Sun: 8.30am to 5.30pm</span>
+              </div>
+            </div>
+            
+            <div className="col-lg-3 col-md-6 mb-4 mb-md-0">
+              <h5 className="mb-3">Company</h5>
+              <ul className="list-unstyled">
+                <li className="mb-2"><a href="#!" className="text-white text-decoration-none">About</a></li>
+                <li className="mb-2"><a href="#!" className="text-white text-decoration-none">Documents</a></li>
+                <li className="mb-2"><a href="#!" className="text-white text-decoration-none">Contacts</a></li>
+              </ul>
+            </div>
+            
+            <div className="col-lg-3 col-md-6 mb-4 mb-md-0">
+              <h5 className="mb-3">Customer</h5>
+              <ul className="list-unstyled">
+                <li className="mb-2"><a href="#!" className="text-white text-decoration-none">Upload your payment</a></li>
+                <li className="mb-2"><a href="#!" className="text-white text-decoration-none">FAQs</a></li>
+                <li className="mb-2"><a href="#!" className="text-white text-decoration-none">How to get a loan</a></li>
+                <li className="mb-2"><a href="#!" className="text-white text-decoration-none">How to repay a loan</a></li>
+              </ul>
+            </div>
+            
+            <div className="col-lg-3 col-md-6 mb-4 mb-md-0">
+              <h5 className="mb-3">Social</h5>
+              <ul className="list-unstyled">
+                <li className="mb-2"><a href="#!" className="text-white text-decoration-none">Facebook</a></li>
+                <li className="mb-2"><a href="#!" className="text-white text-decoration-none">Instagram</a></li>
+                <li className="mb-2"><a href="#!" className="text-white text-decoration-none">Twitter</a></li>
+              </ul>
+            </div>
+          </div>
+          
+          <hr style={{ backgroundColor: colors.white, opacity: 0.2 }} />
+          
+          <div className="row py-3">
+            <div className="col-12 text-center">
+              <p className="small mb-0">
+                © 2022 - {new Date().getFullYear()} All rights reserved
+              </p>
+            </div>
+          </div>
+        </div>
+      </footer>
 
       {/* Chat Icon */}
       <div className="chat-icon">
