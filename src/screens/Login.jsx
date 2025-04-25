@@ -92,7 +92,7 @@ function Login() {
                 style={{ objectFit: 'contain', maxHeight: '60%' }}
               />
               <div className="text-white px-4 pb-4 d-flex flex-column justify-content-end h-100">
-                <MDBTypography tag='h4' className="fw-bold mb-3">Loan 360 - Banking Solutions</MDBTypography>
+                <MDBTypography tag='h4' className="fw-bold mb-3">Loan 360 - Banking Solutions - Gayani</MDBTypography>
                 <p className="mb-4">
                   Welcome back to our secure banking platform. Log in to access your loan applications, 
                   check your status, and manage your financial future.
