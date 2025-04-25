@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ChatIcon from '../components/ui/ChatIcon';
 import ChatWindow from '../components/ui/ChatWindow';
 import '../LoanLandingPage.css';
@@ -7,6 +8,9 @@ import Header from '../components/ui/Header';
 function LoanLandingPage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [loanAmount, setLoanAmount] = useState(25000);
+  const [userName, setUserName] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
   
   // New modern design color theme
   const colors = {
@@ -18,6 +22,48 @@ function LoanLandingPage() {
     white: '#ffffff', // White
   };
 
+  // Check if user is logged in when component mounts
+  useEffect(() => {
+    const token = localStorage.getItem('jwt_token');
+    if (token) {
+      setIsLoggedIn(true);
+      // Try to get user data from localStorage
+      try {
+        const userId = localStorage.getItem('user_id');
+        const username = localStorage.getItem('rememberedUsername');
+        if (username) {
+          setUserName(username);
+        } else {
+          // If rememberedUsername is not available, try to use username from another source
+          // This is a fallback solution
+          const storedUser = localStorage.getItem('user');
+          if (storedUser) {
+            const userData = JSON.parse(storedUser);
+            setUserName(userData.username || 'User');
+          } else {
+            setUserName('User'); // Default if no username is found
+          }
+        }
+      } catch (error) {
+        console.error("Error retrieving user data:", error);
+        setUserName('User'); // Default fallback
+      }
+    } else {
+      setIsLoggedIn(false);
+      setUserName('');
+    }
+  }, []);
+
+  // Handle apply loan click - redirect to login if not logged in
+  const handleApplyLoan = (e) => {
+    if (!isLoggedIn) {
+      e.preventDefault();
+      navigate('/login');
+    } else {
+      navigate('/PersonalInfo');
+    }
+  };
+
   return (
     <div style={{ backgroundColor: colors.background }}>
       <Header />
@@ -27,6 +73,13 @@ function LoanLandingPage() {
         <div className="container">
           <div className="row align-items-center">
             <div className="col-md-7 text-white pe-5">
+              {isLoggedIn && (
+                <div className="mb-3 p-3 rounded" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}>
+                  <h4 style={{ color: colors.white }}>Hi, {userName}! 👋</h4>
+                  <p className="mb-0" style={{ color: colors.white }}>Welcome back to Loan 360</p>
+                </div>
+              )}
+              
               <div className="mb-4">
                 <h1 className="display-1 fw-bold" style={{ color: colors.accent }}>0%</h1>
                 <h2 className="display-5 fw-bold text-uppercase" style={{ color: colors.accent }}>WITH INTEREST</h2>
@@ -41,8 +94,8 @@ function LoanLandingPage() {
                   <p className="mb-0 fw-semibold">Get the money </p>
                 </div>
                 
-                <a 
-                  href="/PersonalInfo"
+                <button 
+                  onClick={handleApplyLoan}
                   className="btn rounded-pill px-5 py-3 fw-bold"
                   style={{ 
                     backgroundColor: colors.accent,
@@ -52,7 +105,7 @@ function LoanLandingPage() {
                   }}
                 >
                   Apply now
-                </a>
+                </button>
               </div>
             </div>
             
@@ -174,7 +227,7 @@ function LoanLandingPage() {
                       color: colors.white
                     }}
                   >
-                    <i className={`fas fa-${step.icon} fa-4x`}></i> {/* Changed from fa-2x to fa-4x */}
+                    <i className={`fas fa-${step.icon} fa-4x`}></i>
                   </div>
                   <p>{step.title}</p>
                 </div>
@@ -182,8 +235,8 @@ function LoanLandingPage() {
             ))}
           </div>
           
-          <a 
-            href="/PersonalInfo"
+          <button 
+            onClick={handleApplyLoan}
             className="btn mt-4 rounded-pill px-5 py-3 fw-bold"
             style={{ 
               backgroundColor: colors.accent,
@@ -192,12 +245,12 @@ function LoanLandingPage() {
               color: colors.white
             }}
           >
-            Apply now
-          </a>
+            {isLoggedIn ? 'Apply now' : 'Login to apply'}
+          </button>
         </div>
       </div>
 
-      {/* /* Who Can Use Section */ }
+      {/* Who Can Use Section */}
       <div style={{ backgroundColor: colors.background, padding: '60px 0' }}>
         <div className="container">
           <h2 className="mb-5 text-center" style={{ color: colors.secondary }}>
