@@ -59,10 +59,10 @@ function LoanLandingPage() {
             <div className="col-md-5">
               <div className="position-relative">
                 <img 
-                  src="https://img.freepik.com/free-photo/cheerful-young-couple-using-laptop-together_171337-21517.jpg?w=996&t=st=1714092468~exp=1714093068~hmac=7df78b6c133cc162ab36c701f89fea245eb7e3a6507826fa3c6c8315226699f7" 
+                  src="https://img.freepik.com/free-vector/bank-loan-concept-illustration_114360-21880.jpg?t=st=1745552897~exp=1745556497~hmac=bfd86adad312199497eadd71f4674134b6d804cde39b28e56f4f915b907f22b6&w=900" 
                   alt="Happy couple using financial app"
                   className="img-fluid rounded"
-                  style={{ maxWidth: '100%' }}
+                  style={{ maxWidth: '90%' }}
                 />
                 
                 {/* Loan Calculator Card */}
@@ -168,13 +168,13 @@ function LoanLandingPage() {
                   <div 
                     className="mx-auto mb-4 d-flex align-items-center justify-content-center rounded-circle"
                     style={{ 
-                      width: '80px', 
-                      height: '80px', 
+                      width: '150px', 
+                      height: '150px', 
                       backgroundColor: colors.accent,
                       color: colors.white
                     }}
                   >
-                    <i className={`fas fa-${step.icon} fa-2x`}></i>
+                    <i className={`fas fa-${step.icon} fa-4x`}></i> {/* Changed from fa-2x to fa-4x */}
                   </div>
                   <p>{step.title}</p>
                 </div>
@@ -196,8 +196,8 @@ function LoanLandingPage() {
           </a>
         </div>
       </div>
-      
-      {/* Who Can Use Section */}
+
+      {/* /* Who Can Use Section */ }
       <div style={{ backgroundColor: colors.background, padding: '60px 0' }}>
         <div className="container">
           <h2 className="mb-5 text-center" style={{ color: colors.secondary }}>
@@ -236,7 +236,7 @@ function LoanLandingPage() {
                   <div className="col-md-12" key={index}>
                     <div className="d-flex align-items-center mb-3">
                       <div 
-                        className="d-flex align-items-center justify-content-center rounded-circle me-3"
+                        className="d-flex align-items-center justify-content-center rounded-circle me-2"
                         style={{ 
                           width: '50px', 
                           height: '50px', 
@@ -247,7 +247,7 @@ function LoanLandingPage() {
                       >
                         <i className={`fas fa-${requirement.icon}`}></i>
                       </div>
-                      <div>
+                      <div className="ms-0">
                         <h6 className="fw-bold mb-0">{requirement.title}</h6>
                         <p className="mb-0">{requirement.description}</p>
                       </div>
@@ -259,67 +259,78 @@ function LoanLandingPage() {
           </div>
         </div>
       </div>
-      
+
       {/* Footer */}
-      <footer style={{ backgroundColor: colors.secondary, color: colors.white, padding: '40px 0 0' }}>
-        <div className="container">
-          <div className="row mb-4">
-            <div className="col-lg-3 col-md-6 mb-4 mb-md-0">
-              <h5 className="mb-3 text-start">Contact Us</h5>
-              <div className="d-flex  mb-3 text-start">
-                <i className="fas fa-phone-alt me-2"></i>
-                <span>117750300</span>
-              </div>
-              <div className="d-flex align-items-center mb-3 text-start">
-                <i className="fas fa-envelope me-2"></i>
-                <span>support@loan360.lk</span>
-              </div>
-              <div className="d-flex align-items-center text-start">
-                <i className="fas fa-clock me-2"></i>
-                <span>Mon - Sun: 8.30am to 5.30pm</span>
-              </div>
-            </div>
-            
-            <div className="col-lg-3 col-md-6 mb-4 mb-md-0">
-              <h5 className="mb-3 text-start">Company</h5>
-              <ul className="list-unstyled text-start">
-                <li className="mb-2"><a href="#!" className="text-white text-decoration-none">About</a></li>
-                <li className="mb-2"><a href="#!" className="text-white text-decoration-none">Documents</a></li>
-                <li className="mb-2"><a href="#!" className="text-white text-decoration-none">Contacts</a></li>
-              </ul>
-            </div>
-            
-            <div className="col-lg-3 col-md-6 mb-4 mb-md-0">
-              <h5 className="mb-3 text-start">Customer</h5>
-              <ul className="list-unstyled text-start">
-                <li className="mb-2"><a href="#!" className="text-white text-decoration-none">Upload your payment</a></li>
-                <li className="mb-2"><a href="#!" className="text-white text-decoration-none">FAQs</a></li>
-                <li className="mb-2"><a href="#!" className="text-white text-decoration-none">How to get a loan</a></li>
-                <li className="mb-2"><a href="#!" className="text-white text-decoration-none">How to repay a loan</a></li>
-              </ul>
-            </div>
-            
-            <div className="col-lg-3 col-md-6 mb-4 mb-md-0">
-              <h5 className="mb-3 text-start">Social</h5>
-              <ul className="list-unstyled text-start">
-                <li className="mb-2"><a href="#!" className="text-white text-decoration-none">Facebook</a></li>
-                <li className="mb-2"><a href="#!" className="text-white text-decoration-none">Instagram</a></li>
-                <li className="mb-2"><a href="#!" className="text-white text-decoration-none">Twitter</a></li>
-              </ul>
-            </div>
-          </div>
-          
-          <hr style={{ backgroundColor: colors.white, opacity: 0.2 }} />
-          
-          <div className="row py-3">
-            <div className="col-12 text-start">
-              <p className="small mb-0">
-                © 2022 - {new Date().getFullYear()} All rights reserved
-              </p>
-            </div>
-          </div>
+      <footer style={{ backgroundColor: colors.secondary, color: colors.white, padding: '48px 0 0', fontSize: '1rem', letterSpacing: '0.01em' }}>
+  <div className="container">
+    <div className="row mb-4">
+      {/* Contact Us */}
+      <div className="col-lg-3 col-md-6 mb-4 mb-md-0" style={{ textAlign: 'left' }}>
+        <h5 className="mb-4 text-start" style={{ fontWeight: 700 }}>Contact Us</h5>
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+          <i className="fas fa-phone-alt" style={{ fontSize: '1.2rem', minWidth: '32px', color: colors.accent,  }}></i>
+          <span style={{ color: '#fff' }}>117750300</span>
         </div>
-      </footer>
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+          <i className="fas fa-envelope" style={{ fontSize: '1.2rem', minWidth: '32px', color: colors.accent, marginRight: '12px' }}></i>
+          <span style={{ color: '#fff' }}>support@loan360.lk</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <i className="fas fa-clock" style={{ fontSize: '1.2rem', minWidth: '32px', color: colors.accent, marginRight: '12px' }}></i>
+          <span style={{ color: '#fff' }}>Mon - Sun: 8.30am<br />to 5.30pm</span>
+        </div>
+      </div>
+      {/* Company */}
+      <div className="col-lg-3 col-md-6 mb-4 mb-md-0">
+        <h5 className="mb-4 text-start" style={{ fontWeight: 700 }}>Company</h5>
+        <ul className="list-unstyled text-start">
+          <li className="mb-2"><a href="#" className="footer-link">About</a></li>
+          <li className="mb-2"><a href="#" className="footer-link">Documents</a></li>
+          <li className="mb-2"><a href="#" className="footer-link">Contacts</a></li>
+        </ul>
+      </div>
+      {/* Customer */}
+      <div className="col-lg-3 col-md-6 mb-4 mb-md-0">
+        <h5 className="mb-4 text-start" style={{ fontWeight: 700 }}>Customer</h5>
+        <ul className="list-unstyled text-start">
+          <li className="mb-2"><a href="#" className="footer-link">Upload your payment</a></li>
+          <li className="mb-2"><a href="#" className="footer-link">FAQs</a></li>
+          <li className="mb-2"><a href="#" className="footer-link">How to get a loan</a></li>
+          <li className="mb-2"><a href="#" className="footer-link">How to repay a loan</a></li>
+        </ul>
+      </div>
+      {/* Social */}
+      <div className="col-lg-3 col-md-6 mb-4 mb-md-0">
+        <h5 className="mb-4 text-start" style={{ fontWeight: 700 }}>Social</h5>
+        <ul className="list-unstyled text-start">
+          <li className="mb-2"><a href="#" className="footer-link">Facebook</a></li>
+          <li className="mb-2"><a href="#" className="footer-link">Instagram</a></li>
+          <li className="mb-2"><a href="#" className="footer-link">Twitter</a></li>
+        </ul>
+      </div>
+    </div>
+    <hr style={{ backgroundColor: colors.white, opacity: 0.15 }} />
+    <div className="row py-3">
+      <div className="col-12 text-start">
+        <p className="small mb-0" style={{ color: '#e0e0e0' }}>
+          © {new Date().getFullYear()} All rights reserved
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+{/* Footer link hover effect */}
+<style>{`
+  .footer-link {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-link:hover {
+    color: ${colors.accent};
+    text-decoration: underline;
+  }
+`}</style>
 
       {/* Chat Icon */}
       <div className="chat-icon">

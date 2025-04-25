@@ -9,10 +9,14 @@ import PersonalInfo from './screens/PersonalInfo';
 import FamilyInfo from './screens/FamilyInfo';
 
 
+// Add this style to push content below the fixed header
+const HEADER_HEIGHT = 80; // px, adjust if your header is taller/shorter
+
 function App() {
   return (
     <Router>
       <div className="App">
+        <div style={{ height: HEADER_HEIGHT }} />
         <Routes>
           <Route path="/" element={<LoanLandingPage />} />
           <Route path="/register" element={<Register />} />

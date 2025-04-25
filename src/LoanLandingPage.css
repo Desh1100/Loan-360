@@ -12,19 +12,27 @@ body {
 .custom-header {
   background-color: #ffffff;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  padding: 15px 0;
-  position: sticky;
+  padding: 0;
+  position: fixed;
   top: 0;
-  z-index: 1000;
+  left: 0;
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  z-index: 1100;
 }
 
 .header-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 0 !important;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-sizing: border-box;
 }
 
 .logo {
@@ -194,9 +202,9 @@ body {
   }
   
   .navbar {
-    max-width: 1200px;
+    /* max-width: 1200px; */
     margin: 0 auto;
-    padding: 0 1rem;
+    /* padding: 0 1rem; */
     height: 4rem;
     display: flex;
     align-items: center;
@@ -297,8 +305,35 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-  }
-  
+    z-index: 1001;
+}
+
+.chat-button {
+  background: transparent;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.chat-button:active, .chat-button:focus {
+  background: rgba(0,0,0,0.04);
+}
+
+.chat-button svg {
+  width: 2rem;
+  height: 2rem;
+  display: block;
+}
+
   .chat-window {
     position: fixed;
     bottom: 6rem;
@@ -418,93 +453,60 @@ body {
 }
 
 /* Footer Styling */
-.footer-gradient {
-  background-image: linear-gradient(to bottom, #1e40af, #1e3a8a);
+.footer {
+  background: linear-gradient(90deg, #015b59 0%, #005a76 100%);
+  color: #fff;
+  padding: 48px 0 0;
+  font-size: 1rem;
+  letter-spacing: 0.01em;
 }
-
-.footer-link {
-  transition: all 0.3s ease;
+.footer h5 {
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #ff7300;
 }
-
-.footer-link:hover {
-  transform: translateX(5px);
+.footer .footer-link,
+.footer a {
+  color: #fff;
+  opacity: 0.85;
+  transition: color 0.2s, opacity 0.2s;
+  text-decoration: none;
 }
-
-.social-icon {
-  transition: all 0.3s ease;
+.footer .footer-link:hover,
+.footer a:hover {
+  color: #ff7300;
+  opacity: 1;
+  text-decoration: underline;
 }
-
-.social-icon:hover {
-  transform: scale(1.1) rotate(6deg);
+.footer .d-flex i {
+  color: #ff7300;
+  margin-right: 0.75rem;
+  font-size: 1.1em;
 }
-
-/* Enhanced Chat Styling */
-.chat-bubble-assistant {
-  background-color: #f0f7ff;
-  border-radius: 18px 18px 18px 4px;
-  padding: 12px 16px;
-  margin-bottom: 12px;
-  max-width: 80%;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-  position: relative;
-  animation: slideInLeft 0.3s ease-out forwards;
+.footer .list-unstyled li {
+  margin-bottom: 0.75rem;
 }
-
-.chat-bubble-user {
-  background-color: #1e40af;
-  color: white;
-  border-radius: 18px 18px 4px 18px;
-  padding: 12px 16px;
-  margin-bottom: 12px;
-  margin-left: auto;
-  max-width: 80%;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-  position: relative;
-  animation: slideInRight 0.3s ease-out forwards;
-}
-
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.chat-button {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  width: 60px;
-  height: 60px;
-  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
-  color: white;
+.footer-divider {
   border: none;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(30, 64, 175, 0.4);
-  transition: all 0.3s ease;
-  z-index: 999;
+  height: 1px;
+  background: rgba(255,255,255,0.15);
+  margin: 32px 0 0 0;
 }
-
-.chat-button:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 15px rgba(30, 64, 175, 0.5);
+.footer .row.mb-4 {
+  margin-bottom: 2.5rem !important;
+}
+.footer .small {
+  opacity: 0.7;
+}
+@media (max-width: 767px) {
+  .footer {
+    text-align: center;
+    padding: 32px 0 0;
+  }
+  .footer .row > div {
+    margin-bottom: 2rem;
+  }
+  .footer .d-flex {
+    justify-content: center;
+  }
 }

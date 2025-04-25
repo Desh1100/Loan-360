@@ -63,9 +63,7 @@ const Header = () => {
             <li className="nav-item">
               <Link to="/" className="nav-link" style={{ color: colors.text, fontWeight: '500' }}>About</Link>
             </li>
-            <li className="nav-item">
-              <Link to="#" className="nav-link" style={{ color: colors.text, fontWeight: '500' }}>Payments</Link>
-            </li>
+           
             <li className="nav-item">
               <Link to="#" className="nav-link" style={{ color: colors.text, fontWeight: '500' }}>How to</Link>
             </li>
