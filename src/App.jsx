@@ -7,6 +7,8 @@ import LoanLandingPage from './screens/LoanLandingPage';
 
 import PersonalInfo from './screens/PersonalInfo';
 import FamilyInfo from './screens/FamilyInfo';
+import EligibilityCheck from './screens/EligibilityCheck';
+import EligibilityResult from './screens/EligibilityResult';
 
 
 // Add this style to push content below the fixed header
@@ -22,6 +24,8 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/Landing" element={<LoanLandingPage />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/eligibility-check" element={<EligibilityCheck />} />
+          <Route path="/eligibility-result" element={<EligibilityResult />} />
           <Route path="/PersonalInfo" element={<PersonalInfo />} />
           <Route path="/family-info" element={<FamilyInfo />} />
           

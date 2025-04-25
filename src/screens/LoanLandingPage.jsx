@@ -64,7 +64,7 @@ function LoanLandingPage() {
       e.preventDefault();
       navigate('/login');
     } else {
-      navigate('/PersonalInfo');
+      navigate('/eligibility-check');
     }
   };
 
