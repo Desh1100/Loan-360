@@ -29,19 +29,23 @@ function LoanLandingPage() {
       setIsLoggedIn(true);
       // Try to get user data from localStorage
       try {
-        const userId = localStorage.getItem('user_id');
-        const username = localStorage.getItem('rememberedUsername');
-        if (username) {
-          setUserName(username);
+        // First check for the direct username key we just added
+        const directUsername = localStorage.getItem('username');
+        if (directUsername) {
+          setUserName(directUsername);
         } else {
-          // If rememberedUsername is not available, try to use username from another source
-          // This is a fallback solution
-          const storedUser = localStorage.getItem('user');
-          if (storedUser) {
-            const userData = JSON.parse(storedUser);
-            setUserName(userData.username || 'User');
+          // Fall back to the old methods if directUsername is not available
+          const rememberedUsername = localStorage.getItem('rememberedUsername');
+          if (rememberedUsername) {
+            setUserName(rememberedUsername);
           } else {
-            setUserName('User'); // Default if no username is found
+            const storedUser = localStorage.getItem('user');
+            if (storedUser) {
+              const userData = JSON.parse(storedUser);
+              setUserName(userData.username || 'User');
+            } else {
+              setUserName('User'); // Default if no username is found
+            }
           }
         }
       } catch (error) {

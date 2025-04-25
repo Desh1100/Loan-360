@@ -56,7 +56,10 @@ function Login() {
         localStorage.setItem('jwt_token', token);
         localStorage.setItem('user_id', user._id);
         
-        // If remember me is checked, store username
+        // Always store username, regardless of remember me
+        localStorage.setItem('username', formData.username);
+        
+        // If remember me is checked, store rememberedUsername for login form persistence
         if (formData.rememberMe) {
           localStorage.setItem('rememberedUsername', formData.username);
         } else {
