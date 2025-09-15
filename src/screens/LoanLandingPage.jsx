@@ -372,6 +372,20 @@ function LoanLandingPage() {
         <p className="small mb-0" style={{ color: '#e0e0e0' }}>
           © {new Date().getFullYear()} All rights reserved
         </p>
+        <p className="small mb-0" style={{ color: '#e0e0e0' }}>
+          <span 
+            onClick={() => navigate('/admin/login')} 
+            style={{ 
+              cursor: 'pointer', 
+              textDecoration: 'underline',
+              color: '#e0e0e0'
+            }}
+            onMouseEnter={(e) => e.target.style.color = colors.accent}
+            onMouseLeave={(e) => e.target.style.color = '#e0e0e0'}
+          >
+            admin
+          </span>
+        </p>
       </div>
     </div>
   </div>
