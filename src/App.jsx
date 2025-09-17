@@ -8,6 +8,7 @@ import PersonalInfo from './screens/PersonalInfo';
 import FamilyInfo from './screens/FamilyInfo';
 import EligibilityCheck from './screens/EligibilityCheck';
 import EligibilityResult from './screens/EligibilityResult';
+import UserProfile from './components/ui/UserProfile';
 
 // Import Admin components
 import DashBoard from './components/Admin/DashBoard';
@@ -33,6 +34,7 @@ function App() {
           <Route path="/eligibility-result" element={<EligibilityResult />} />
           <Route path="/PersonalInfo" element={<PersonalInfo />} />
           <Route path="/family-info" element={<FamilyInfo />} />
+          <Route path="/profile" element={<UserProfile />} />
           <Route path="/admin/app" element={<DashBoard />} />
           <Route path="/dashboard" element={<DashBoard />} />
           <Route path="/admin/signup" element={<Signup />} />

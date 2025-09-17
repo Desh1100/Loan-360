@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import ChatIcon from '../components/ui/ChatIcon';
 import ChatWindow from '../components/ui/ChatWindow';
 import '../LoanLandingPage.css';
@@ -10,6 +11,11 @@ function LoanLandingPage() {
   const [loanAmount, setLoanAmount] = useState(25000);
   const [userName, setUserName] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const [userLoans, setUserLoans] = useState([]);
+  const [isLoanPanelOpen, setIsLoanPanelOpen] = useState(false);
+  const [selectedLoan, setSelectedLoan] = useState(null);
   const navigate = useNavigate();
   
   // New modern design color theme
@@ -20,6 +26,35 @@ function LoanLandingPage() {
     background: '#e9f8fb', // Light cyan background
     text: '#333333', // Dark text
     white: '#ffffff', // White
+  };
+
+  // Fetch user data and loan applications
+  const fetchUserData = async () => {
+    try {
+      const token = localStorage.getItem('jwt_token');
+      const userId = localStorage.getItem('user_id');
+      
+      if (token && userId) {
+        // Fetch user profile data
+        const userResponse = await axios.get(`http://localhost:8001/api/auth/profile`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setUserData(userResponse.data);
+
+        // Fetch user's loan applications
+        const loansResponse = await axios.get(`http://localhost:8001/api/loans/user/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setUserLoans(loansResponse.data);
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+
+  const handleLoanDetailsClick = (loan) => {
+    setSelectedLoan(loan);
+    setIsLoanPanelOpen(true);
   };
 
   // Check if user is logged in when component mounts
@@ -52,11 +87,28 @@ function LoanLandingPage() {
         console.error("Error retrieving user data:", error);
         setUserName('User'); // Default fallback
       }
+      
+      // Fetch user data and loan applications
+      fetchUserData();
     } else {
       setIsLoggedIn(false);
       setUserName('');
     }
   }, []);
+
+  // Close profile dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isProfileOpen && !event.target.closest('.position-relative')) {
+        setIsProfileOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isProfileOpen]);
 
   // Handle apply loan click - redirect to login if not logged in
   const handleApplyLoan = (e) => {
@@ -71,6 +123,144 @@ function LoanLandingPage() {
   return (
     <div style={{ backgroundColor: colors.background }}>
       <Header />
+      
+      {/* User Profile Icon - positioned absolutely */}
+      {isLoggedIn && (
+        <div style={{ 
+          position: 'fixed', 
+          top: '20px', 
+          right: '20px', 
+          zIndex: 9999 
+        }}>
+          <div className="position-relative">
+            <button
+              className="btn rounded-circle p-0"
+              style={{
+                width: '50px',
+                height: '50px',
+                backgroundColor: colors.accent,
+                border: 'none',
+                boxShadow: '0 4px 8px rgba(0,0,0,0.2)'
+              }}
+              onClick={() => setIsProfileOpen(!isProfileOpen)}
+            >
+              <i className="fas fa-user" style={{ color: colors.white, fontSize: '1.2rem' }}></i>
+            </button>
+            
+            {/* Profile Dropdown */}
+            {isProfileOpen && (
+              <div
+                className="position-absolute shadow-lg rounded"
+                style={{
+                  top: '60px',
+                  right: '0',
+                  width: '300px',
+                  backgroundColor: colors.white,
+                  border: `1px solid ${colors.primary}`,
+                  zIndex: 10000
+                }}
+              >
+                <div className="p-3">
+                  <div className="d-flex align-items-center mb-3">
+                    <div
+                      className="rounded-circle d-flex align-items-center justify-content-center me-3"
+                      style={{
+                        width: '40px',
+                        height: '40px',
+                        backgroundColor: colors.primary,
+                        color: colors.white
+                      }}
+                    >
+                      <i className="fas fa-user"></i>
+                    </div>
+                    <div>
+                      <h6 className="mb-0" style={{ color: colors.text }}>{userName}</h6>
+                      <small className="text-muted">
+                        {userData?.email || 'Loading...'}
+                      </small>
+                    </div>
+                  </div>
+                  
+                  {userData && (
+                    <div className="mb-3">
+                      <small className="text-muted">User Details:</small>
+                      <div style={{ fontSize: '0.85rem', color: colors.text }}>
+                        <div><strong>First Name:</strong> {userData.first_name}</div>
+                        <div><strong>Last Name:</strong> {userData.last_name}</div>
+                        <div><strong>Phone:</strong> {userData.phone}</div>
+                        <div><strong>Joined:</strong> {new Date(userData.created_at).toLocaleDateString()}</div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Loan Application Status */}
+                  {userLoans.length > 0 ? (
+                    <div className="mb-3">
+                      <button
+                        className="btn w-100"
+                        style={{
+                          backgroundColor: colors.primary,
+                          color: colors.white,
+                          fontSize: '0.9rem'
+                        }}
+                        onClick={() => handleLoanDetailsClick(userLoans[0])}
+                      >
+                        <i className="fas fa-file-alt me-2"></i>
+                        Loan Application Submitted
+                      </button>
+                      <small className="text-muted">
+                        Status: {userLoans[0].eligibility_status || 'Pending'}
+                      </small>
+                    </div>
+                  ) : (
+                    <div className="mb-3">
+                      <button
+                        className="btn w-100"
+                        style={{
+                          backgroundColor: colors.accent,
+                          color: colors.white,
+                          fontSize: '0.9rem'
+                        }}
+                        onClick={handleApplyLoan}
+                      >
+                        <i className="fas fa-plus me-2"></i>
+                        Apply for Loan
+                      </button>
+                    </div>
+                  )}
+                  
+                  <hr />
+                  <button
+                    className="btn btn-outline-primary btn-sm w-100 mb-2"
+                    onClick={() => {
+                      setIsProfileOpen(false);
+                      navigate('/profile');
+                    }}
+                  >
+                    <i className="fas fa-user-cog me-2"></i>
+                    View Profile
+                  </button>
+                  <button
+                    className="btn btn-outline-danger btn-sm w-100"
+                    onClick={() => {
+                      localStorage.clear();
+                      setIsLoggedIn(false);
+                      setUserName('');
+                      setUserData(null);
+                      setUserLoans([]);
+                      setIsProfileOpen(false);
+                      navigate('/');
+                    }}
+                  >
+                    <i className="fas fa-sign-out-alt me-2"></i>
+                    Logout
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       
       {/* Hero Section with 0% Interest Banner */}
       <div style={{ backgroundColor: colors.primary, position: 'relative', overflow: 'hidden', padding: '40px 0' }}>
@@ -402,6 +592,188 @@ function LoanLandingPage() {
     text-decoration: underline;
   }
 `}</style>
+
+      {/* Loan Details Side Panel */}
+      {isLoanPanelOpen && selectedLoan && (
+        <>
+          {/* Overlay */}
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              zIndex: 9998
+            }}
+            onClick={() => setIsLoanPanelOpen(false)}
+          ></div>
+          
+          {/* Side Panel */}
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              right: 0,
+              width: '400px',
+              height: '100%',
+              backgroundColor: colors.white,
+              boxShadow: '-4px 0 20px rgba(0,0,0,0.3)',
+              zIndex: 9999,
+              overflow: 'auto'
+            }}
+          >
+            <div className="p-4">
+              {/* Header */}
+              <div className="d-flex justify-content-between align-items-center mb-4">
+                <h5 style={{ color: colors.primary, margin: 0 }}>
+                  <i className="fas fa-file-alt me-2"></i>
+                  Loan Application Details
+                </h5>
+                <button
+                  className="btn btn-sm"
+                  style={{ color: colors.text }}
+                  onClick={() => setIsLoanPanelOpen(false)}
+                >
+                  <i className="fas fa-times"></i>
+                </button>
+              </div>
+              
+              {/* Application Status */}
+              <div className="mb-4 p-3 rounded" style={{ backgroundColor: colors.background }}>
+                <div className="d-flex align-items-center justify-content-between">
+                  <span style={{ color: colors.text }}>Status:</span>
+                  <span
+                    className="badge px-3 py-2"
+                    style={{
+                      backgroundColor: selectedLoan.eligibility_status === 'Approved' ? '#28a745' : 
+                                     selectedLoan.eligibility_status === 'Rejected' ? '#dc3545' : colors.accent,
+                      color: colors.white
+                    }}
+                  >
+                    {selectedLoan.eligibility_status || 'Pending'}
+                  </span>
+                </div>
+              </div>
+              
+              {/* Personal Details */}
+              <div className="mb-4">
+                <h6 style={{ color: colors.secondary }}>Personal Information</h6>
+                <div className="border rounded p-3">
+                  <div className="row g-2">
+                    <div className="col-12">
+                      <small className="text-muted">Full Name:</small>
+                      <div>{selectedLoan.personal_details?.full_name}</div>
+                    </div>
+                    <div className="col-12">
+                      <small className="text-muted">NIC:</small>
+                      <div>{selectedLoan.personal_details?.nic}</div>
+                    </div>
+                    <div className="col-6">
+                      <small className="text-muted">Title:</small>
+                      <div>{selectedLoan.personal_details?.title}</div>
+                    </div>
+                    <div className="col-6">
+                      <small className="text-muted">Home Town:</small>
+                      <div>{selectedLoan.personal_details?.home_town}</div>
+                    </div>
+                    <div className="col-12">
+                      <small className="text-muted">Address:</small>
+                      <div>{selectedLoan.personal_details?.residential_address}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Family Details */}
+              <div className="mb-4">
+                <h6 style={{ color: colors.secondary }}>Family & Education</h6>
+                <div className="border rounded p-3">
+                  <div className="row g-2">
+                    <div className="col-6">
+                      <small className="text-muted">Dependents:</small>
+                      <div>{selectedLoan.family_details?.dependents}</div>
+                    </div>
+                    <div className="col-6">
+                      <small className="text-muted">Education:</small>
+                      <div>{selectedLoan.family_details?.education}</div>
+                    </div>
+                    <div className="col-12">
+                      <small className="text-muted">Self Employed:</small>
+                      <div>{selectedLoan.family_details?.self_employed ? 'Yes' : 'No'}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Financial Details */}
+              <div className="mb-4">
+                <h6 style={{ color: colors.secondary }}>Financial Information</h6>
+                <div className="border rounded p-3">
+                  <div className="row g-2">
+                    <div className="col-6">
+                      <small className="text-muted">Basic Salary:</small>
+                      <div>LKR {selectedLoan.financial_details?.basic_salary?.toLocaleString()}</div>
+                    </div>
+                    <div className="col-6">
+                      <small className="text-muted">Annual Income:</small>
+                      <div>LKR {selectedLoan.financial_details?.annual_income?.toLocaleString()}</div>
+                    </div>
+                    <div className="col-6">
+                      <small className="text-muted">Loan Amount:</small>
+                      <div>LKR {selectedLoan.financial_details?.loan_amount?.toLocaleString()}</div>
+                    </div>
+                    <div className="col-6">
+                      <small className="text-muted">Loan Term:</small>
+                      <div>{selectedLoan.financial_details?.loan_term} months</div>
+                    </div>
+                    <div className="col-6">
+                      <small className="text-muted">CIBIL Score:</small>
+                      <div>{selectedLoan.financial_details?.cibil_score}</div>
+                    </div>
+                    <div className="col-6">
+                      <small className="text-muted">Occupation:</small>
+                      <div>{selectedLoan.financial_details?.occupation}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Asset Details */}
+              <div className="mb-4">
+                <h6 style={{ color: colors.secondary }}>Asset Information</h6>
+                <div className="border rounded p-3">
+                  <div className="row g-2">
+                    <div className="col-6">
+                      <small className="text-muted">Residential:</small>
+                      <div>LKR {selectedLoan.asset_details?.residential_asset_value?.toLocaleString()}</div>
+                    </div>
+                    <div className="col-6">
+                      <small className="text-muted">Commercial:</small>
+                      <div>LKR {selectedLoan.asset_details?.commercial_asset_value?.toLocaleString()}</div>
+                    </div>
+                    <div className="col-6">
+                      <small className="text-muted">Luxury:</small>
+                      <div>LKR {selectedLoan.asset_details?.luxury_asset_value?.toLocaleString()}</div>
+                    </div>
+                    <div className="col-6">
+                      <small className="text-muted">Bank:</small>
+                      <div>LKR {selectedLoan.asset_details?.bank_asset_value?.toLocaleString()}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Application Date */}
+              <div className="mb-4">
+                <small className="text-muted">Application Date:</small>
+                <div>{new Date(selectedLoan.application_date).toLocaleDateString()}</div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Chat Icon */}
       <div className="chat-icon">
