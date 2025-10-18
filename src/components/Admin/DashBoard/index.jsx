@@ -1,10 +1,19 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./styles.module.css";
 import LoanApplicationsTable from "./LoanapplicationTable";
 import { useNavigate } from "react-router-dom";
 
 const DashBoard = () => {
     const navigate = useNavigate();
+    const [dashboardStats, setDashboardStats] = useState({
+        totalApplications: 0,
+        approvedLoans: 0,
+        pendingApprovals: 0,
+        rejectedLoans: 0,
+        approvalRate: "0.0",
+        rejectionRate: "0.0"
+    });
+    const [statsLoading, setStatsLoading] = useState(true);
 
     const handleNavigation = () => {
       navigate("./AutoFeedback");
@@ -63,13 +72,47 @@ const DashBoard = () => {
       return false;
     };
 
-    // Mock data - in real app this would come from API
-    const dashboardStats = {
-        totalApplications: 245,
-        approvedLoans: 156,
-        pendingApprovals: 43,
-        rejectedLoans: 46
+    // Fetch dashboard statistics
+    const fetchDashboardStats = async () => {
+        setStatsLoading(true);
+        try {
+            const token = localStorage.getItem('adminToken');
+            if (!token) {
+                throw new Error('No authentication token found');
+            }
+
+            const response = await fetch('http://localhost:8001/api/loans/admin/statistics', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            setDashboardStats({
+                totalApplications: data.totalApplications,
+                approvedLoans: data.approvedLoans,
+                pendingApprovals: data.pendingLoans,
+                rejectedLoans: data.rejectedLoans,
+                approvalRate: data.approvalRate,
+                rejectionRate: data.rejectionRate
+            });
+        } catch (error) {
+            console.error('Error fetching dashboard stats:', error);
+            // Keep default values on error
+        } finally {
+            setStatsLoading(false);
+        }
     };
+
+    useEffect(() => {
+        fetchDashboardStats();
+    }, []);
   
   return (
     <div className={styles.dashboard_container}>
@@ -100,7 +143,7 @@ const DashBoard = () => {
           <div className={styles.card_icon}>📊</div>
           <div className={styles.card_content}>
             <h3>Total Applications</h3>
-            <p className={styles.stat_number}>{dashboardStats.totalApplications}</p>
+            <p className={styles.stat_number}>{statsLoading ? "..." : dashboardStats.totalApplications}</p>
             <span className={styles.stat_label}>All time</span>
           </div>
         </div>
@@ -108,15 +151,15 @@ const DashBoard = () => {
           <div className={styles.card_icon}>✅</div>
           <div className={styles.card_content}>
             <h3>Approved Loans</h3>
-            <p className={styles.stat_number}>{dashboardStats.approvedLoans}</p>
-            <span className={styles.stat_label}>63.7% approval rate</span>
+            <p className={styles.stat_number}>{statsLoading ? "..." : dashboardStats.approvedLoans}</p>
+            <span className={styles.stat_label}>{dashboardStats.approvalRate}% approval rate</span>
           </div>
         </div>
         <div className={`${styles.card} ${styles.pending_card}`}>
           <div className={styles.card_icon}>⏳</div>
           <div className={styles.card_content}>
             <h3>Pending Reviews</h3>
-            <p className={styles.stat_number}>{dashboardStats.pendingApprovals}</p>
+            <p className={styles.stat_number}>{statsLoading ? "..." : dashboardStats.pendingApprovals}</p>
             <span className={styles.stat_label}>Awaiting decision</span>
           </div>
         </div>
@@ -124,8 +167,8 @@ const DashBoard = () => {
           <div className={styles.card_icon}>❌</div>
           <div className={styles.card_content}>
             <h3>Rejected Loans</h3>
-            <p className={styles.stat_number}>{dashboardStats.rejectedLoans}</p>
-            <span className={styles.stat_label}>18.8% rejection rate</span>
+            <p className={styles.stat_number}>{statsLoading ? "..." : dashboardStats.rejectedLoans}</p>
+            <span className={styles.stat_label}>{dashboardStats.rejectionRate}% rejection rate</span>
           </div>
         </div>
       </div>

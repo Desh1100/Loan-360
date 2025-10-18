@@ -1,86 +1,131 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const LoanApplicationsTable = ({ initialApplications }) => {
   const [statusFilter, setStatusFilter] = useState("All");
+  const [loanApplications, setLoanApplications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    totalLoans: 0
+  });
 
-  // Updated sample loan data with the 5 "Not Eligible" users
-  const loanApplications = initialApplications || [
-    {
-      id: "LA001",
-      name: "Ruwan Perera",
-      amount: "Rs. 30,000",
-      status: "Not Eligible",
-      date: "2025-04-17",
-    },
-    {
-      id: "LA002",
-      name: "Kumari Wijesuriya",
-      amount: "Rs. 20,000",
-      status: "Pending",
-      date: "2025-04-17",
-    },
-    {
-      id: "LA003",
-      name: "Pradeep Kumar",
-      amount: "Rs. 15,000",
-      status: "Rejected",
-      date: "2025-04-18",
-    },
-    {
-      id: "LA004",
-      name: "Saman Perera",
-      amount: "Rs. 100,000",
-      status: "Approved",
-      date: "2025-04-20",
-    },
-    {
-      id: "LA005",
-      name: "Nadeesha Jayasinghe",
-      amount: "Rs. 70,000",
-      status: "Not Eligible",
-      date: "2025-04-20",
-    },
-    {
-      id: "LA006",
-      name: "Dinesh Bandara",
-      amount: "Rs. 50,000",
-      status: "Pending",
-      date: "2025-04-21",
-    },
-    {
-      id: "LA007",
-      name: "Tharindu Fernando",
-      amount: "Rs. 90,000",
-      status: "Rejected",
-      date: "2025-04-24",
-    },
-    {
-      id: "LA008",
-      name: "Chathurika Silva",
-      amount: "Rs. 40,000",
-      status: "Approved",
-      date: "2025-04-24",
-    },
-    {
-      id: "LA009",
-      name: "Janith Perera",
-      amount: "Rs. 25,000",
-      status: "Pending",
-      date: "2025-04-27",
-    },
-    {
-      id: "LA010",
-      name: "Sanduni Rajapakse",
-      amount: "Rs. 60,000",
-      status: "Rejected",
-      date: "2025-04-27",
-    },
-  ];
+  // Fetch loan data from API
+  const fetchLoanData = async (page = 1, status = "All", search = "") => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('adminToken');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
 
-  const filteredApplications =
-    statusFilter === "All"
-      ? loanApplications
-      : loanApplications.filter((app) => app.status === statusFilter);
+      const queryParams = new URLSearchParams({
+        page: page,
+        limit: 10,
+        ...(status !== "All" && { status }),
+        ...(search && { search })
+      });
+
+      const response = await fetch(`http://localhost:8001/api/loans/admin/all?${queryParams}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('API Error:', response.status, errorText);
+        throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log('Received loan data:', data); // Debug log
+      setLoanApplications(data.loans || []);
+      setPagination(data.pagination || {});
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching loan data:', err);
+      console.error('Token exists:', !!localStorage.getItem('adminToken'));
+      setError(err.message);
+      // Fallback to sample data if API fails
+      setLoanApplications([
+        {
+          id: "LA001",
+          name: "Ruwan Perera",
+          amount: "Rs. 30,000",
+          status: "Not Eligible",
+          date: "2025-04-17",
+        },
+        {
+          id: "LA002",
+          name: "Kumari Wijesuriya",
+          amount: "Rs. 20,000",
+          status: "Pending",
+          date: "2025-04-17",
+        },
+        {
+          id: "LA003",
+          name: "Pradeep Kumar",
+          amount: "Rs. 15,000",
+          status: "Rejected",
+          date: "2025-04-18",
+        },
+        {
+          id: "LA004",
+          name: "Saman Perera",
+          amount: "Rs. 100,000",
+          status: "Approved",
+          date: "2025-04-20",
+        },
+        {
+          id: "LA005",
+          name: "Nadeesha Jayasinghe",
+          amount: "Rs. 70,000",
+          status: "Not Eligible",
+          date: "2025-04-20",
+        }
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!initialApplications) {
+      fetchLoanData();
+    } else {
+      setLoanApplications(initialApplications);
+      setLoading(false);
+    }
+  }, [initialApplications]);
+
+  // Handle filter change
+  useEffect(() => {
+    if (!initialApplications) {
+      fetchLoanData(1, statusFilter, searchTerm);
+    }
+  }, [statusFilter, searchTerm, initialApplications]);
+
+  // Handle search with debounce
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (!initialApplications) {
+        fetchLoanData(1, statusFilter, searchTerm);
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, statusFilter, initialApplications]);
+
+  const filteredApplications = initialApplications 
+    ? (statusFilter === "All"
+        ? loanApplications
+        : loanApplications.filter((app) => app.status === statusFilter))
+    : loanApplications; // API already handles filtering
 
   const getStatusStyle = (status) => {
     switch (status) {
@@ -229,6 +274,36 @@ const LoanApplicationsTable = ({ initialApplications }) => {
     }
   };
 
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '200px',
+        fontSize: '16px',
+        color: '#8B4513'
+      }}>
+        Loading loan applications...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '200px',
+        fontSize: '16px',
+        color: '#CD5C5C'
+      }}>
+        Error loading data: {error}
+      </div>
+    );
+  }
+
   return (
     <div style={tableStyles.container}>
       <div style={tableStyles.filterContainer}>
@@ -250,6 +325,8 @@ const LoanApplicationsTable = ({ initialApplications }) => {
           <input
             type="text"
             placeholder="Search applications..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             style={tableStyles.searchInput}
             onFocus={(e) => e.target.style.borderColor = "#8B4513"}
             onBlur={(e) => e.target.style.borderColor = "#D2B48C"}
@@ -365,7 +442,73 @@ const LoanApplicationsTable = ({ initialApplications }) => {
             ))}
           </tbody>
         </table>
+        {filteredApplications.length === 0 && (
+          <div style={{
+            textAlign: 'center',
+            padding: '40px',
+            color: '#8B4513',
+            fontSize: '16px'
+          }}>
+            No loan applications found.
+          </div>
+        )}
       </div>
+
+      {!initialApplications && pagination.totalPages > 1 && (
+        <div style={{
+          marginTop: '20px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '16px',
+          backgroundColor: '#FFF8DC',
+          borderRadius: '10px'
+        }}>
+          <div style={{ color: '#654321', fontSize: '14px' }}>
+            Showing {((pagination.currentPage - 1) * 10) + 1} to {Math.min(pagination.currentPage * 10, pagination.totalLoans)} of {pagination.totalLoans} loans
+          </div>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button
+              onClick={() => fetchLoanData(pagination.currentPage - 1, statusFilter, searchTerm)}
+              disabled={!pagination.hasPrev}
+              style={{
+                padding: '8px 16px',
+                border: '2px solid #D2B48C',
+                borderRadius: '6px',
+                backgroundColor: pagination.hasPrev ? 'white' : '#F5F5DC',
+                color: pagination.hasPrev ? '#8B4513' : '#999',
+                cursor: pagination.hasPrev ? 'pointer' : 'not-allowed',
+                fontSize: '14px'
+              }}
+            >
+              Previous
+            </button>
+            <span style={{ 
+              padding: '8px 16px', 
+              color: '#654321',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}>
+              Page {pagination.currentPage} of {pagination.totalPages}
+            </span>
+            <button
+              onClick={() => fetchLoanData(pagination.currentPage + 1, statusFilter, searchTerm)}
+              disabled={!pagination.hasNext}
+              style={{
+                padding: '8px 16px',
+                border: '2px solid #D2B48C',
+                borderRadius: '6px',
+                backgroundColor: pagination.hasNext ? 'white' : '#F5F5DC',
+                color: pagination.hasNext ? '#8B4513' : '#999',
+                cursor: pagination.hasNext ? 'pointer' : 'not-allowed',
+                fontSize: '14px'
+              }}
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
