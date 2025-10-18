@@ -121,7 +121,7 @@ function LoanLandingPage() {
   };
 
   return (
-    <div style={{ backgroundColor: colors.background }}>
+    <div style={{ backgroundColor: colors.background, paddingTop: '80px' }}>
       <Header />
       
       {/* User Profile Icon - positioned absolutely */}

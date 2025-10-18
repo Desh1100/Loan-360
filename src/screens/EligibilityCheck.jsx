@@ -159,7 +159,7 @@ function EligibilityCheck() {
 
   if (isLoading) {
     return (
-      <div style={{ backgroundColor: colors.background, minHeight: '100vh' }}>
+      <div style={{ backgroundColor: colors.background, minHeight: '100vh', paddingTop: '80px' }}>
         <Header />
         <MDBContainer className="d-flex align-items-center justify-content-center" style={{ minHeight: 'calc(100vh - 80px)' }}>
           <div className="text-center">
@@ -175,7 +175,7 @@ function EligibilityCheck() {
   }
 
   return (
-    <div style={{ backgroundColor: colors.background, minHeight: '100vh' }}>
+    <div style={{ backgroundColor: colors.background, minHeight: '100vh', paddingTop: '80px' }}>
       <Header />
       
       <MDBContainer className="py-5">

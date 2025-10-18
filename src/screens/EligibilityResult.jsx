@@ -34,7 +34,7 @@ function EligibilityResult() {
   };
 
   return (
-    <div style={{ backgroundColor: colors.background, minHeight: '100vh' }}>
+    <div style={{ backgroundColor: colors.background, minHeight: '100vh', paddingTop: '80px' }}>
       <Header />
       
       <MDBContainer className="py-5">

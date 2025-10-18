@@ -173,7 +173,7 @@ function LoanApplicationForm() {
     
   };
   return (
-    <MDBContainer>
+    <MDBContainer style={{ paddingTop: '80px' }}>
       <Header /> 
       {loading ? ( // Show loader if loading
         <Loader />

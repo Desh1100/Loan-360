@@ -14,6 +14,10 @@ const DashBoard = () => {
       navigate("/admin/manage-admins");
     };
 
+    const handleSystemSettings = () => {
+      navigate("/admin/system-settings");
+    };
+
     const handleLogout = () => {
       // Clear any stored authentication data
       localStorage.removeItem('adminToken');
@@ -146,7 +150,7 @@ const DashBoard = () => {
               <span className={styles.btn_desc}>Analytics & insights</span>
             </div>
           </button>
-          <button className={`${styles.action_btn} ${styles.secondary_action}`}>
+          <button className={`${styles.action_btn} ${styles.secondary_action}`} onClick={handleSystemSettings}>
             <span className={styles.btn_icon}>⚙️</span>
             <div className={styles.btn_content}>
               <span className={styles.btn_title}>System Settings</span>

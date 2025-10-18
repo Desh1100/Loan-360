@@ -16,15 +16,12 @@ import AutoFeedback from './components/Admin/DashBoard/AutoFeedback';
 import Signup from './components/Admin/Singup';
 import AdminLogin from './components/Admin/Login';
 import ManageAdmins from './components/Admin/ManageAdmins';
-
-// Add this style to push content below the fixed header
-const HEADER_HEIGHT = 80; // px, adjust if your header is taller/shorter
+import SystemSettings from './components/Admin/SystemSettings';
 
 function App() {
   return (
     <Router>
       <div className="App">
-        <div style={{ height: HEADER_HEIGHT }} />
         <Routes>
           <Route path="/" element={<LoanLandingPage />} />
           <Route path="/register" element={<Register />} />
@@ -41,6 +38,7 @@ function App() {
           <Route path="/admin/auto-feedback" element={<AutoFeedback />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/manage-admins" element={<ManageAdmins />} />
+          <Route path="/admin/system-settings" element={<SystemSettings />} />
         </Routes>
       </div>
     </Router>
