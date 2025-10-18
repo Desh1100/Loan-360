@@ -28,6 +28,8 @@ const LoanApplicationsTable = ({ initialApplications }) => {
         ...(search && { search })
       });
 
+      console.log('Fetching loans with params:', { page, status, search }); // Debug log
+
       const response = await fetch(`http://localhost:8001/api/loans/admin/all?${queryParams}`, {
         method: 'GET',
         headers: {
@@ -103,29 +105,51 @@ const LoanApplicationsTable = ({ initialApplications }) => {
     }
   }, [initialApplications]);
 
-  // Handle filter change
+  // Handle status filter change for API calls
   useEffect(() => {
     if (!initialApplications) {
       fetchLoanData(1, statusFilter, searchTerm);
     }
-  }, [statusFilter, searchTerm, initialApplications]);
+  }, [statusFilter, initialApplications]);
 
-  // Handle search with debounce
+  // Handle search with debounce for API calls only
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (!initialApplications) {
-        fetchLoanData(1, statusFilter, searchTerm);
-      }
-    }, 500);
+    if (!initialApplications) {
+      const timeoutId = setTimeout(() => {
+        // Only search if term is at least 2 characters or empty
+        if (searchTerm.length === 0 || searchTerm.length >= 2) {
+          fetchLoanData(1, statusFilter, searchTerm.trim());
+        }
+      }, 500);
 
-    return () => clearTimeout(timeoutId);
-  }, [searchTerm, statusFilter, initialApplications]);
+      return () => clearTimeout(timeoutId);
+    }
+    // For initialApplications (client-side), no debounce needed as filtering is instant
+  }, [searchTerm, initialApplications]);
 
-  const filteredApplications = initialApplications 
-    ? (statusFilter === "All"
-        ? loanApplications
-        : loanApplications.filter((app) => app.status === statusFilter))
-    : loanApplications; // API already handles filtering
+  // Memoize filtered applications to prevent unnecessary re-renders
+  const filteredApplications = React.useMemo(() => {
+    let filtered = loanApplications;
+    
+    // For API-driven data, filtering is handled server-side, so return as is
+    if (!initialApplications) {
+      return filtered;
+    }
+    
+    // For initial/client-side data, apply filters locally
+    if (statusFilter !== "All") {
+      filtered = filtered.filter((app) => app.status === statusFilter);
+    }
+    
+    // Apply name search filter (client-side)
+    if (searchTerm.trim()) {
+      filtered = filtered.filter((app) => 
+        app.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
+      );
+    }
+    
+    return filtered;
+  }, [loanApplications, statusFilter, searchTerm, initialApplications]);
 
   const getStatusStyle = (status) => {
     switch (status) {
@@ -324,12 +348,16 @@ const LoanApplicationsTable = ({ initialApplications }) => {
         <div style={tableStyles.searchContainer}>
           <input
             type="text"
-            placeholder="Search applications..."
+            placeholder="Search by applicant name..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              e.preventDefault();
+              setSearchTerm(e.target.value);
+            }}
             style={tableStyles.searchInput}
             onFocus={(e) => e.target.style.borderColor = "#8B4513"}
             onBlur={(e) => e.target.style.borderColor = "#D2B48C"}
+            autoComplete="off"
           />
         </div>
       </div>

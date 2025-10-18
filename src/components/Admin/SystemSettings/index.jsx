@@ -123,45 +123,8 @@ const SystemSettings = () => {
                 </div>
             </div>
 
-            {/* System Statistics Section */}
-            <div className={styles.stats_section}>
-                <h3 className={styles.section_title}>System Statistics</h3>
-                <div className={styles.stats_grid}>
-                    <div className={`${styles.stat_card} ${styles.users_card}`}>
-                        <div className={styles.stat_icon}>👥</div>
-                        <div className={styles.stat_content}>
-                            <h4>Total Users</h4>
-                            <p className={styles.stat_number}>{systemStats.totalUsers.toLocaleString()}</p>
-                            <span className={styles.stat_label}>Registered users</span>
-                        </div>
-                    </div>
-                    <div className={`${styles.stat_card} ${styles.admins_card}`}>
-                        <div className={styles.stat_icon}>🛡️</div>
-                        <div className={styles.stat_content}>
-                            <h4>Total Admins</h4>
-                            <p className={styles.stat_number}>{systemStats.totalAdmins}</p>
-                            <span className={styles.stat_label}>System administrators</span>
-                        </div>
-                    </div>
-                    <div className={`${styles.stat_card} ${styles.loans_card}`}>
-                        <div className={styles.stat_icon}>💰</div>
-                        <div className={styles.stat_content}>
-                            <h4>Total Loans</h4>
-                            <p className={styles.stat_number}>{systemStats.totalLoans.toLocaleString()}</p>
-                            <span className={styles.stat_label}>Loan applications</span>
-                        </div>
-                    </div>
-                    <div className={`${styles.stat_card} ${styles.uptime_card}`}>
-                        <div className={styles.stat_icon}>⚡</div>
-                        <div className={styles.stat_content}>
-                            <h4>System Uptime</h4>
-                            <p className={styles.stat_number}>{systemStats.systemUptime}%</p>
-                            <span className={styles.stat_label}>Last 30 days</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+         
+            
             {/* System Information Section */}
             <div className={styles.system_section}>
                 <h3 className={styles.section_title}>System Information</h3>
