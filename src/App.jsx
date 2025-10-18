@@ -13,6 +13,7 @@ import UserProfile from './components/ui/UserProfile';
 // Import Admin components
 import DashBoard from './components/Admin/DashBoard';
 import AutoFeedback from './components/Admin/DashBoard/AutoFeedback';
+import Analytics from './components/Admin/Analytics';
 import Signup from './components/Admin/Singup';
 import AdminLogin from './components/Admin/Login';
 import ManageAdmins from './components/Admin/ManageAdmins';
@@ -36,6 +37,7 @@ function App() {
           <Route path="/dashboard" element={<DashBoard />} />
           <Route path="/admin/signup" element={<Signup />} />
           <Route path="/admin/auto-feedback" element={<AutoFeedback />} />
+          <Route path="/admin/analytics" element={<Analytics />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/manage-admins" element={<ManageAdmins />} />
           <Route path="/admin/system-settings" element={<SystemSettings />} />

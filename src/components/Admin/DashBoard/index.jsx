@@ -19,6 +19,10 @@ const DashBoard = () => {
       navigate("./AutoFeedback");
     };
 
+    const handleAnalytics = () => {
+      navigate("/admin/analytics");
+    };
+
     const handleManageAdmins = () => {
       navigate("/admin/manage-admins");
     };
@@ -186,7 +190,7 @@ const DashBoard = () => {
               <span className={styles.btn_desc}>AI-powered loan analysis</span>
             </div>
           </button>
-          <button className={`${styles.action_btn} ${styles.secondary_action}`}>
+          <button className={`${styles.action_btn} ${styles.secondary_action}`} onClick={handleAnalytics}>
             <span className={styles.btn_icon}>📈</span>
             <div className={styles.btn_content}>
               <span className={styles.btn_title}>View Reports</span>
