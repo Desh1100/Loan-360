@@ -55,91 +55,82 @@ const Signup = () => {
 
 	return (
 		<div className={styles.signup_container}>
-			<div className={styles.background_pattern}></div>
-			<div className={styles.signup_form_container}>
-				<div className={styles.left}>
-					<h1>Already Have Account?</h1>
-					<p style={{ 
-						color: 'var(--warm-white)', 
-						textAlign: 'center', 
-						marginBottom: '1.5rem',
-						fontSize: '1.1rem',
-						opacity: 0.9,
-						position: 'relative',
-						zIndex: 1
-					}}>
-						Sign in to access your admin dashboard
-					</p>
-					<Link to="/Admin/Login">
-						<button type="button" className={styles.white_btn}>
-							Sign In
-						</button>
-					</Link>
+			<div className={styles.signup_card}>
+				{/* Header */}
+				<div className={styles.header}>
+					<h1>Admin Registration</h1>
+					<p>Request administrative access</p>
 				</div>
-				<div className={styles.right}>
-					<form className={styles.form_container} onSubmit={handleSubmit}>
-						<div className={styles.header}>
-							<h1>Create Admin Account</h1>
-							<p style={{ 
-								color: 'var(--coffee)', 
-								margin: '0 0 0.5rem 0',
-								fontSize: '1.1rem',
-								fontWeight: 500
-							}}>
-								Join our administrative team
-							</p>
-							<p style={{ 
-								color: 'var(--secondary-brown)', 
-								margin: 0,
-								fontSize: '0.9rem',
-								opacity: 0.8
-							}}>
-								Please fill in your details below
-							</p>
-						</div>
+
+				{/* Form */}
+				<form onSubmit={handleSubmit} className={styles.form}>
+					<div className={styles.input_group}>
+						<label>First Name</label>
 						<input
 							type="text"
-							placeholder="First Name"
+							placeholder="Enter first name"
 							name="firstName"
 							onChange={handleChange}
 							value={data.firstName}
 							required
 							className={styles.input}
 						/>
+					</div>
+
+					<div className={styles.input_group}>
+						<label>Last Name</label>
 						<input
 							type="text"
-							placeholder="Last Name"
+							placeholder="Enter last name"
 							name="lastName"
 							onChange={handleChange}
 							value={data.lastName}
 							required
 							className={styles.input}
 						/>
+					</div>
+
+					<div className={styles.input_group}>
+						<label>Email</label>
 						<input
 							type="email"
-							placeholder="Email"
+							placeholder="Enter your email"
 							name="email"
 							onChange={handleChange}
 							value={data.email}
 							required
 							className={styles.input}
 						/>
+					</div>
+
+					<div className={styles.input_group}>
+						<label>Password</label>
 						<input
 							type="password"
-							placeholder="Password"
+							placeholder="Create a password"
 							name="password"
 							onChange={handleChange}
 							value={data.password}
 							required
 							className={styles.input}
 						/>
-						{error && <div className={styles.error_msg}>{error}</div>}
-						{success && <div className={styles.success_msg}>{success}</div>}
-						<button type="submit" className={styles.green_btn} disabled={isLoading}>
-							{isLoading ? "Creating Account..." : "Sign Up"}
-						</button>
-					</form>
-				</div>
+					</div>
+
+					{/* Messages */}
+					{error && <div className={styles.error_msg}>{error}</div>}
+					{success && <div className={styles.success_msg}>{success}</div>}
+
+					{/* Submit Button */}
+					<button type="submit" disabled={isLoading} className={styles.submit_btn}>
+						{isLoading ? "Creating Account..." : "Create Account"}
+					</button>
+
+					{/* Login Link */}
+					<div className={styles.login_link}>
+						<span>Already have an account? </span>
+						<Link to="/Admin/Login">Sign In</Link>
+					</div>
+				</form>
 			</div>
 		</div>
 	);

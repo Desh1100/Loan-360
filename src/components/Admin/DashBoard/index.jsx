@@ -73,20 +73,6 @@ const DashBoard = () => {
         <div className={styles.header_content}>
           <h1 className={styles.dashboard_title}>Admin Dashboard</h1>
           <p className={styles.dashboard_subtitle}>Loan Management System</p>
-          {/* Debug info - remove this in production */}
-          <div style={{ 
-            background: 'rgba(139, 69, 19, 0.1)', 
-            padding: '10px', 
-            borderRadius: '8px', 
-            marginTop: '10px',
-            fontSize: '12px',
-            fontFamily: 'monospace'
-          }}>
-            <strong>Debug Info:</strong><br/>
-            Super Admin Check: {isSuperAdmin() ? '✅ YES' : '❌ NO'}<br/>
-            Admin User: {localStorage.getItem('adminUser') ? 'Found' : 'Not Found'}<br/>
-            Admin Token: {localStorage.getItem('adminToken') ? 'Found' : 'Not Found'}
-          </div>
         </div>
         <div className={styles.admin_info}>
           <div className={styles.admin_profile}>
