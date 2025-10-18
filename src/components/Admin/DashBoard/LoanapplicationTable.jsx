@@ -8,6 +8,8 @@ const LoanApplicationsTable = ({ initialApplications }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [availableAdmins, setAvailableAdmins] = useState([]);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
@@ -18,6 +20,29 @@ const LoanApplicationsTable = ({ initialApplications }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedLoan, setSelectedLoan] = useState(null);
   const [loanDetailsLoading, setLoanDetailsLoading] = useState(false);
+
+  // Fetch available admins for assignment (super admin only)
+  const fetchAvailableAdmins = async () => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      if (!token) return;
+
+      const response = await fetch('http://localhost:8001/api/loans/admin/assignment/admins', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const admins = await response.json();
+        setAvailableAdmins(admins);
+      }
+    } catch (err) {
+      console.error('Error fetching admins:', err);
+    }
+  };
 
   // Fetch loan data from API
   const fetchLoanData = async (page = 1, status = "All", search = "") => {
@@ -55,7 +80,13 @@ const LoanApplicationsTable = ({ initialApplications }) => {
       console.log('Received loan data:', data); // Debug log
       setLoanApplications(data.loans || []);
       setPagination(data.pagination || {});
+      setIsSuperAdmin(data.isSuperAdmin || false);
       setError(null);
+
+      // Fetch available admins if user is super admin
+      if (data.isSuperAdmin) {
+        fetchAvailableAdmins();
+      }
     } catch (err) {
       console.error('Error fetching loan data:', err);
       console.error('Token exists:', !!localStorage.getItem('adminToken'));
@@ -144,6 +175,39 @@ const LoanApplicationsTable = ({ initialApplications }) => {
   const closeDrawer = () => {
     setIsDrawerOpen(false);
     setSelectedLoan(null);
+  };
+
+  // Assign admin to loan
+  const assignAdminToLoan = async (loanId, adminId) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      const response = await fetch(`http://localhost:8001/api/loans/admin/${loanId}/assign`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ adminId })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      // Refresh the loan data to show updated assignment
+      fetchLoanData(pagination.currentPage, statusFilter, searchTerm);
+      
+      alert(`Admin assigned successfully!`);
+    } catch (err) {
+      console.error('Error assigning admin:', err);
+      alert('Failed to assign admin. Please try again.');
+    }
   };
 
   // Generate PDF report
@@ -709,6 +773,7 @@ const LoanApplicationsTable = ({ initialApplications }) => {
               <th style={tableStyles.th}>Loan Amount</th>
               <th style={tableStyles.th}>Status</th>
               <th style={tableStyles.th}>Application Date</th>
+              {isSuperAdmin && <th style={tableStyles.th}>Assigned Admin</th>}
               <th style={tableStyles.th}>Actions</th>
             </tr>
           </thead>
@@ -762,6 +827,30 @@ const LoanApplicationsTable = ({ initialApplications }) => {
                   </span>
                 </td>
                 <td style={tableStyles.td}>{application.date}</td>
+                {isSuperAdmin && (
+                  <td style={tableStyles.td}>
+                    <select
+                      style={{
+                        ...tableStyles.select,
+                        fontSize: "12px",
+                        padding: "6px 10px",
+                        width: "150px"
+                      }}
+                      value={application.assignedAdmin?.id || ""}
+                      onChange={(e) => {
+                        const selectedAdminId = e.target.value || null;
+                        assignAdminToLoan(application.id || application._id, selectedAdminId);
+                      }}
+                    >
+                      <option value="">Unassigned</option>
+                      {availableAdmins.map((admin) => (
+                        <option key={admin.id} value={admin.id}>
+                          {admin.name}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                )}
                 <td style={tableStyles.td}>
                   <div style={{ display: "flex", gap: "8px" }}>
                     <button
@@ -927,6 +1016,18 @@ const LoanApplicationsTable = ({ initialApplications }) => {
                 }}>
                   Loan Application Details
                 </h4>
+                {isSuperAdmin && selectedLoan?.assignedAdmin && (
+                  <div style={{
+                    padding: '8px 12px',
+                    backgroundColor: '#E8F5E8',
+                    color: '#228B22',
+                    borderRadius: '6px',
+                    fontSize: '12px',
+                    fontWeight: '600'
+                  }}>
+                    Assigned to: {selectedLoan.assignedAdmin.name}
+                  </div>
+                )}
                 <button
                   style={{
                     background: 'none',
@@ -1192,6 +1293,51 @@ const LoanApplicationsTable = ({ initialApplications }) => {
                       </div>
                     </div>
                   </div>
+
+                  {/* Admin Assignment Section for Super Admin */}
+                  {isSuperAdmin && (
+                    <div style={{
+                      marginBottom: '16px',
+                      padding: '16px',
+                      backgroundColor: '#FFF8DC',
+                      borderRadius: '10px',
+                      border: '1px solid #D2B48C'
+                    }}>
+                      <h6 style={{ 
+                        color: '#8B4513', 
+                        marginBottom: '12px',
+                        fontWeight: '600',
+                        fontSize: '14px'
+                      }}>
+                        Admin Assignment
+                      </h6>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <label style={{ color: '#654321', fontWeight: '500', fontSize: '14px' }}>
+                          Assign to:
+                        </label>
+                        <select
+                          style={{
+                            ...tableStyles.select,
+                            fontSize: "14px",
+                            padding: "8px 12px",
+                            flex: 1
+                          }}
+                          value={selectedLoan?.assignedAdmin?.id || ""}
+                          onChange={(e) => {
+                            const selectedAdminId = e.target.value || null;
+                            assignAdminToLoan(selectedLoan._id, selectedAdminId);
+                          }}
+                        >
+                          <option value="">Unassigned</option>
+                          {availableAdmins.map((admin) => (
+                            <option key={admin.id} value={admin.id}>
+                              {admin.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Action Buttons */}
                   <div style={{
