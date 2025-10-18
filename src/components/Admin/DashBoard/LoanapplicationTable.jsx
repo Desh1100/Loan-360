@@ -785,14 +785,6 @@ const LoanApplicationsTable = ({ initialApplications }) => {
                   ...tableStyles.tr,
                   backgroundColor: index % 2 === 0 ? "#FFF8DC" : "white"
                 }}
-                onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = "#F5DEB3";
-                  e.target.style.transform = "scale(1.002)";
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = index % 2 === 0 ? "#FFF8DC" : "white";
-                  e.target.style.transform = "scale(1)";
-                }}
               >
                 <td style={{...tableStyles.td, fontWeight: "600", color: "#8B4513"}}>
                   {application.id}
@@ -870,28 +862,6 @@ const LoanApplicationsTable = ({ initialApplications }) => {
                       disabled={loanDetailsLoading}
                     >
                       {loanDetailsLoading ? "Loading..." : "View"}
-                    </button>
-                    <button
-                      style={{
-                        padding: "6px 12px",
-                        border: "2px solid #D2691E",
-                        borderRadius: "6px",
-                        backgroundColor: "transparent",
-                        color: "#D2691E",
-                        fontSize: "12px",
-                        cursor: "pointer",
-                        transition: "all 0.3s ease"
-                      }}
-                      onMouseEnter={(e) => {
-                        e.target.style.backgroundColor = "#D2691E";
-                        e.target.style.color = "white";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.backgroundColor = "transparent";
-                        e.target.style.color = "#D2691E";
-                      }}
-                    >
-                      Edit
                     </button>
                   </div>
                 </td>
