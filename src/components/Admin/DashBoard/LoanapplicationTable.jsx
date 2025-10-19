@@ -20,6 +20,13 @@ const LoanApplicationsTable = ({ initialApplications }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedLoan, setSelectedLoan] = useState(null);
   const [loanDetailsLoading, setLoanDetailsLoading] = useState(false);
+  
+  // Status update state
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [statusUpdateReason, setStatusUpdateReason] = useState("");
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [newStatus, setNewStatus] = useState("");
+  const [statusHistory, setStatusHistory] = useState([]);
 
   // Fetch available admins for assignment (super admin only)
   const fetchAvailableAdmins = async () => {
@@ -158,6 +165,9 @@ const LoanApplicationsTable = ({ initialApplications }) => {
       const loanDetails = await response.json();
       setSelectedLoan(loanDetails);
       setIsDrawerOpen(true);
+      
+      // Fetch status history when loan details are loaded
+      fetchStatusHistory(loanId);
     } catch (err) {
       console.error('Error fetching loan details:', err);
       alert('Failed to load loan details. Please try again.');
@@ -175,6 +185,10 @@ const LoanApplicationsTable = ({ initialApplications }) => {
   const closeDrawer = () => {
     setIsDrawerOpen(false);
     setSelectedLoan(null);
+    setStatusHistory([]);
+    setShowStatusModal(false);
+    setStatusUpdateReason("");
+    setNewStatus("");
   };
 
   // Assign admin to loan
@@ -237,6 +251,88 @@ const LoanApplicationsTable = ({ initialApplications }) => {
       console.error('Error re-evaluating loan:', error);
       alert('Error re-evaluating loan');
     }
+  };
+
+  // Update loan status with logging
+  const updateLoanStatus = async (loanId, status, reason) => {
+    if (!reason.trim()) {
+      alert('Please provide a reason for status change');
+      return;
+    }
+
+    setIsUpdatingStatus(true);
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch(`http://localhost:8001/api/loans/admin/${loanId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 
+          status: status,
+          reason: reason.trim(),
+          timestamp: new Date().toISOString()
+        })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        alert(`Loan status updated successfully to: ${status}`);
+        
+        // Refresh the data
+        fetchLoanData(pagination.currentPage, statusFilter, searchTerm);
+        
+        // Also refresh selected loan details if drawer is open
+        if (selectedLoan) {
+          fetchLoanDetails(selectedLoan._id);
+        }
+        
+        // Close modal and reset state
+        setShowStatusModal(false);
+        setStatusUpdateReason("");
+        setNewStatus("");
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update loan status');
+      }
+    } catch (error) {
+      console.error('Error updating loan status:', error);
+      alert(`Error updating loan status: ${error.message}`);
+    } finally {
+      setIsUpdatingStatus(false);
+    }
+  };
+
+  // Fetch status history
+  const fetchStatusHistory = async (loanId) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch(`http://localhost:8001/api/loans/admin/${loanId}/status-history`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const history = await response.json();
+        setStatusHistory(history);
+      } else {
+        console.log('No status history available or error fetching history');
+        setStatusHistory([]);
+      }
+    } catch (error) {
+      console.error('Error fetching status history:', error);
+      setStatusHistory([]);
+    }
+  };
+
+  // Handle status update modal
+  const handleStatusUpdate = (status) => {
+    setNewStatus(status);
+    setShowStatusModal(true);
   };
 
   // Generate PDF report
@@ -496,6 +592,141 @@ const LoanApplicationsTable = ({ initialApplications }) => {
       },
       alternateRowStyles: { fillColor: [255, 252, 240] }
     });
+    
+    yPosition = doc.lastAutoTable.finalY + 15;
+    
+    // Check if we need a new page for ML prediction details
+    if (yPosition > 200) {
+      doc.addPage();
+      yPosition = 30;
+    }
+    
+    // ML Prediction Details Section
+    if (selectedLoan.eligibility_details) {
+      doc.setTextColor(...primaryColor);
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text('ML PREDICTION ANALYSIS', 20, yPosition);
+      yPosition += 5;
+      doc.line(20, yPosition, 130, yPosition);
+      yPosition += 10;
+      
+      const mlPredictionData = [
+        ['ML Prediction Result', selectedLoan.eligibility_details.ml_prediction || 'N/A'],
+        ['Confidence Score', selectedLoan.eligibility_details.confidence_score ? 
+          `${(selectedLoan.eligibility_details.confidence_score * 100).toFixed(1)}%` : 'N/A'],
+        ['Prediction Timestamp', selectedLoan.eligibility_details.prediction_timestamp ? 
+          new Date(selectedLoan.eligibility_details.prediction_timestamp).toLocaleString() : 'N/A'],
+        ['Model Version', selectedLoan.eligibility_details.model_version || 'Latest'],
+        ['Risk Assessment', selectedLoan.eligibility_details.risk_level || 'Standard Assessment']
+      ];
+      
+      autoTable(doc, {
+        startY: yPosition,
+        head: [['Prediction Metric', 'Value/Result']],
+        body: mlPredictionData,
+        theme: 'striped',
+        headStyles: { 
+          fillColor: [255, 115, 0], // Orange color for ML section
+          textColor: [255, 255, 255],
+          fontSize: 11,
+          fontStyle: 'bold'
+        },
+        styles: { 
+          fontSize: 10, 
+          cellPadding: 6,
+          textColor: textColor
+        },
+        columnStyles: { 
+          0: { fontStyle: 'bold', cellWidth: 60, fillColor: [255, 248, 240] },
+          1: { cellWidth: 120 }
+        },
+        alternateRowStyles: { fillColor: [255, 245, 230] }
+      });
+      
+      // Add ML prediction explanation box
+      yPosition = doc.lastAutoTable.finalY + 10;
+      
+      // Check if we need space for the explanation box
+      if (yPosition > 230) {
+        doc.addPage();
+        yPosition = 30;
+      }
+      
+      // ML Explanation Box
+      doc.setFillColor(255, 248, 240);
+      doc.roundedRect(20, yPosition, 170, 35, 3, 3, 'F');
+      doc.setDrawColor(255, 115, 0);
+      doc.setLineWidth(1);
+      doc.roundedRect(20, yPosition, 170, 35, 3, 3, 'S');
+      
+      doc.setTextColor(...primaryColor);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text('ML PREDICTION EXPLANATION:', 25, yPosition + 8);
+      
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      const explanationText = selectedLoan.eligibility_details.confidence_score ? 
+        `The machine learning model has analyzed the applicant's financial profile and determined a ${selectedLoan.eligibility_details.ml_prediction} ` +
+        `status with ${(selectedLoan.eligibility_details.confidence_score * 100).toFixed(1)}% confidence. This prediction is based on ` +
+        `comprehensive analysis of income, assets, credit score, and risk factors.` :
+        `The machine learning model has processed the applicant's information to determine loan eligibility. ` +
+        `The prediction considers multiple financial and personal factors to assess creditworthiness.`;
+      
+      const splitText = doc.splitTextToSize(explanationText, 160);
+      doc.text(splitText, 25, yPosition + 15);
+    }
+    
+    // Add Status History Section to PDF
+    if (statusHistory.length > 0) {
+      // Check if we need a new page for status history
+      yPosition = doc.lastAutoTable ? doc.lastAutoTable.finalY + 15 : yPosition + 50;
+      if (yPosition > 200) {
+        doc.addPage();
+        yPosition = 30;
+      }
+      
+      doc.setTextColor(...primaryColor);
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text('STATUS HISTORY & ACTIVITY LOG', 20, yPosition);
+      yPosition += 5;
+      doc.line(20, yPosition, 140, yPosition);
+      yPosition += 10;
+      
+      const statusHistoryData = statusHistory.slice(0, 10).map(entry => [
+        entry.status || 'Status Update',
+        entry.reason || 'No reason provided',
+        entry.admin_name || entry.updatedBy || 'System',
+        entry.timestamp ? new Date(entry.timestamp).toLocaleDateString() : 'Unknown'
+      ]);
+      
+      autoTable(doc, {
+        startY: yPosition,
+        head: [['Status', 'Reason', 'Updated By', 'Date']],
+        body: statusHistoryData,
+        theme: 'striped',
+        headStyles: { 
+          fillColor: [139, 69, 19], 
+          textColor: [255, 255, 255],
+          fontSize: 10,
+          fontStyle: 'bold'
+        },
+        styles: { 
+          fontSize: 9, 
+          cellPadding: 4,
+          textColor: textColor
+        },
+        columnStyles: { 
+          0: { fontStyle: 'bold', cellWidth: 30 },
+          1: { cellWidth: 70 },
+          2: { cellWidth: 35 },
+          3: { cellWidth: 30 }
+        },
+        alternateRowStyles: { fillColor: [255, 252, 240] }
+      });
+    }
     
     // Footer with professional styling
     const pageCount = doc.internal.getNumberOfPages();
@@ -1393,6 +1624,153 @@ const LoanApplicationsTable = ({ initialApplications }) => {
                     </div>
                   )}
 
+                  {/* Status History Section */}
+                  <div style={{ marginBottom: '24px' }}>
+                    <h6 style={{ 
+                      color: '#8B4513', 
+                      marginBottom: '12px',
+                      fontWeight: '600',
+                      fontSize: '16px'
+                    }}>
+                      Status History & Activity Log
+                    </h6>
+                    <div style={{
+                      border: '1px solid #D2B48C',
+                      borderRadius: '10px',
+                      padding: '16px',
+                      backgroundColor: '#FEFEFE',
+                      maxHeight: '200px',
+                      overflowY: 'auto'
+                    }}>
+                      {statusHistory.length > 0 ? (
+                        statusHistory.map((entry, index) => (
+                          <div key={index} style={{
+                            padding: '8px 12px',
+                            marginBottom: '8px',
+                            backgroundColor: index === 0 ? '#FFF8DC' : '#F9F9F9',
+                            borderLeft: `4px solid ${index === 0 ? '#ff7300' : '#D2B48C'}`,
+                            borderRadius: '4px'
+                          }}>
+                            <div style={{ 
+                              display: 'flex', 
+                              justifyContent: 'space-between', 
+                              alignItems: 'center',
+                              marginBottom: '4px'
+                            }}>
+                              <span style={{ fontWeight: '600', color: '#8B4513', fontSize: '12px' }}>
+                                {entry.status || 'Status Update'}
+                              </span>
+                              <span style={{ color: '#666', fontSize: '10px' }}>
+                                {entry.timestamp ? new Date(entry.timestamp).toLocaleString() : 'Unknown time'}
+                              </span>
+                            </div>
+                            <div style={{ color: '#654321', fontSize: '11px', marginBottom: '2px' }}>
+                              {entry.reason || 'No reason provided'}
+                            </div>
+                            <div style={{ color: '#999', fontSize: '10px' }}>
+                              By: {entry.admin_name || entry.updatedBy || 'System'}
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div style={{ 
+                          textAlign: 'center', 
+                          color: '#999', 
+                          fontSize: '14px',
+                          padding: '20px'
+                        }}>
+                          No status history available
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Quick Status Update Section */}
+                  <div style={{ marginBottom: '24px' }}>
+                    <h6 style={{ 
+                      color: '#8B4513', 
+                      marginBottom: '12px',
+                      fontWeight: '600',
+                      fontSize: '16px'
+                    }}>
+                      Quick Status Actions
+                    </h6>
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr',
+                      gap: '8px'
+                    }}>
+                      <button
+                        onClick={() => handleStatusUpdate('Approved')}
+                        disabled={selectedLoan.status === 'Approved'}
+                        style={{
+                          padding: '10px',
+                          border: 'none',
+                          borderRadius: '6px',
+                          backgroundColor: selectedLoan.status === 'Approved' ? '#ccc' : '#28a745',
+                          color: 'white',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          cursor: selectedLoan.status === 'Approved' ? 'not-allowed' : 'pointer',
+                          opacity: selectedLoan.status === 'Approved' ? 0.6 : 1
+                        }}
+                      >
+                        ✓ Approve
+                      </button>
+                      <button
+                        onClick={() => handleStatusUpdate('Rejected')}
+                        disabled={selectedLoan.status === 'Rejected'}
+                        style={{
+                          padding: '10px',
+                          border: 'none',
+                          borderRadius: '6px',
+                          backgroundColor: selectedLoan.status === 'Rejected' ? '#ccc' : '#dc3545',
+                          color: 'white',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          cursor: selectedLoan.status === 'Rejected' ? 'not-allowed' : 'pointer',
+                          opacity: selectedLoan.status === 'Rejected' ? 0.6 : 1
+                        }}
+                      >
+                        ✗ Reject
+                      </button>
+                      <button
+                        onClick={() => handleStatusUpdate('Pending')}
+                        disabled={selectedLoan.status === 'Pending'}
+                        style={{
+                          padding: '10px',
+                          border: 'none',
+                          borderRadius: '6px',
+                          backgroundColor: selectedLoan.status === 'Pending' ? '#ccc' : '#ffc107',
+                          color: selectedLoan.status === 'Pending' ? '#666' : '#212529',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          cursor: selectedLoan.status === 'Pending' ? 'not-allowed' : 'pointer',
+                          opacity: selectedLoan.status === 'Pending' ? 0.6 : 1
+                        }}
+                      >
+                        ⏳ Set Pending
+                      </button>
+                      <button
+                        onClick={() => handleStatusUpdate('Under Review')}
+                        disabled={selectedLoan.status === 'Under Review'}
+                        style={{
+                          padding: '10px',
+                          border: 'none',
+                          borderRadius: '6px',
+                          backgroundColor: selectedLoan.status === 'Under Review' ? '#ccc' : '#17a2b8',
+                          color: 'white',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          cursor: selectedLoan.status === 'Under Review' ? 'not-allowed' : 'pointer',
+                          opacity: selectedLoan.status === 'Under Review' ? 0.6 : 1
+                        }}
+                      >
+                        🔍 Under Review
+                      </button>
+                    </div>
+                  </div>
+
                   {/* Action Buttons */}
                   <div style={{
                     display: 'flex',
@@ -1400,24 +1778,6 @@ const LoanApplicationsTable = ({ initialApplications }) => {
                     paddingTop: '16px',
                     borderTop: '1px solid #D2B48C'
                   }}>
-                    <button
-                      style={{
-                        flex: 1,
-                        padding: '12px',
-                        border: 'none',
-                        borderRadius: '8px',
-                        backgroundColor: '#8B4513',
-                        color: 'white',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease'
-                      }}
-                      onMouseEnter={(e) => e.target.style.backgroundColor = "#654321"}
-                      onMouseLeave={(e) => e.target.style.backgroundColor = "#8B4513"}
-                    >
-                      Update Status
-                    </button>
                     <button
                       style={{
                         flex: 1,
@@ -1441,11 +1801,195 @@ const LoanApplicationsTable = ({ initialApplications }) => {
                       }}
                       onClick={generatePDFReport}
                     >
-                      Generate Report
+                      📄 Generate Report
+                    </button>
+                    <button
+                      style={{
+                        flex: 1,
+                        padding: '12px',
+                        border: 'none',
+                        borderRadius: '8px',
+                        backgroundColor: '#ff7300',
+                        color: 'white',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseEnter={(e) => e.target.style.backgroundColor = "#e55a00"}
+                      onMouseLeave={(e) => e.target.style.backgroundColor = "#ff7300"}
+                      onClick={() => reevaluateLoan(selectedLoan._id)}
+                    >
+                      🤖 Re-evaluate ML
                     </button>
                   </div>
                 </div>
               )}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Status Update Modal */}
+      {showStatusModal && (
+        <>
+          {/* Modal Overlay */}
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              backgroundColor: 'rgba(0,0,0,0.6)',
+              zIndex: 10000,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+            onClick={() => setShowStatusModal(false)}
+          >
+            {/* Modal Content */}
+            <div
+              style={{
+                backgroundColor: 'white',
+                padding: '24px',
+                borderRadius: '12px',
+                width: '500px',
+                maxWidth: '90vw',
+                boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '20px',
+                paddingBottom: '12px',
+                borderBottom: '2px solid #F5DEB3'
+              }}>
+                <h4 style={{ 
+                  color: '#8B4513', 
+                  margin: 0,
+                  fontWeight: '700'
+                }}>
+                  Update Loan Status
+                </h4>
+                <button
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    fontSize: '18px',
+                    cursor: 'pointer',
+                    color: '#8B4513',
+                    padding: '4px'
+                  }}
+                  onClick={() => setShowStatusModal(false)}
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{
+                  padding: '12px',
+                  backgroundColor: '#FFF8DC',
+                  borderRadius: '8px',
+                  marginBottom: '16px'
+                }}>
+                  <div style={{ fontSize: '14px', color: '#654321' }}>
+                    <strong>Current Status:</strong> 
+                    <span style={getStatusStyle(selectedLoan?.status)} 
+                          className="ml-2">
+                      {selectedLoan?.status}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: '14px', color: '#654321', marginTop: '8px' }}>
+                    <strong>New Status:</strong> 
+                    <span style={getStatusStyle(newStatus)} 
+                          className="ml-2">
+                      {newStatus}
+                    </span>
+                  </div>
+                </div>
+
+                <label style={{
+                  display: 'block',
+                  marginBottom: '8px',
+                  fontWeight: '600',
+                  color: '#8B4513',
+                  fontSize: '14px'
+                }}>
+                  Reason for Status Change: <span style={{ color: 'red' }}>*</span>
+                </label>
+                <textarea
+                  value={statusUpdateReason}
+                  onChange={(e) => setStatusUpdateReason(e.target.value)}
+                  placeholder="Please provide a detailed reason for this status change..."
+                  style={{
+                    width: '100%',
+                    minHeight: '100px',
+                    padding: '12px',
+                    border: '2px solid #D2B48C',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontFamily: 'inherit',
+                    resize: 'vertical',
+                    outline: 'none'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = "#8B4513"}
+                  onBlur={(e) => e.target.style.borderColor = "#D2B48C"}
+                />
+                <div style={{
+                  fontSize: '12px',
+                  color: '#666',
+                  marginTop: '4px'
+                }}>
+                  This reason will be logged and visible in the status history.
+                </div>
+              </div>
+
+              <div style={{
+                display: 'flex',
+                gap: '12px',
+                justifyContent: 'flex-end'
+              }}>
+                <button
+                  onClick={() => setShowStatusModal(false)}
+                  disabled={isUpdatingStatus}
+                  style={{
+                    padding: '10px 20px',
+                    border: '2px solid #D2B48C',
+                    borderRadius: '6px',
+                    backgroundColor: 'transparent',
+                    color: '#8B4513',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: isUpdatingStatus ? 'not-allowed' : 'pointer',
+                    opacity: isUpdatingStatus ? 0.6 : 1
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => updateLoanStatus(selectedLoan._id, newStatus, statusUpdateReason)}
+                  disabled={isUpdatingStatus || !statusUpdateReason.trim()}
+                  style={{
+                    padding: '10px 20px',
+                    border: 'none',
+                    borderRadius: '6px',
+                    backgroundColor: (!statusUpdateReason.trim() || isUpdatingStatus) ? '#ccc' : '#8B4513',
+                    color: 'white',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: (!statusUpdateReason.trim() || isUpdatingStatus) ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  {isUpdatingStatus ? 'Updating...' : 'Update Status'}
+                </button>
+              </div>
             </div>
           </div>
         </>
