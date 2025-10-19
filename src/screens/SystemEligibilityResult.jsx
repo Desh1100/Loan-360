@@ -436,18 +436,16 @@ function SystemEligibilityResult() {
 
                 {/* Action Buttons */}
                 <div className="d-grid gap-2">
-                  <MDBBtn 
-                    onClick={() => navigate('/profile')}
+                  <MDBBtn
+                    onClick={() => navigate('/view-applications')}
                     className="btn-lg rounded-pill py-3"
-                    style={{ 
+                    style={{
                       backgroundColor: colors.primary,
                       boxShadow: '0 4px 9px -4px rgba(1, 91, 89, 0.35)'
                     }}
                   >
                     <MDBIcon fas icon="user-circle" className="me-2" /> View Application Status
-                  </MDBBtn>
-                  
-                  <MDBBtn 
+                  </MDBBtn>                  <MDBBtn 
                     color="light"
                     className="rounded-pill py-2 mt-2"
                     onClick={() => navigate('/landing')}
