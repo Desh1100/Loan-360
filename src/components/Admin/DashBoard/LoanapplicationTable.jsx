@@ -210,6 +210,35 @@ const LoanApplicationsTable = ({ initialApplications }) => {
     }
   };
 
+  // Add re-evaluate function
+  const reevaluateLoan = async (loanId) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch(`http://localhost:8001/api/loans/admin/${loanId}/reevaluate`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        alert(`Loan re-evaluated: ${result.ml_prediction.eligibility_status} (Confidence: ${(result.ml_prediction.confidence * 100).toFixed(1)}%)`);
+        fetchLoanData(pagination.currentPage, statusFilter, searchTerm); // Refresh the data
+        // Also refresh selected loan details if drawer is open
+        if (selectedLoan) {
+          fetchLoanDetails(selectedLoan._id);
+        }
+      } else {
+        throw new Error('Failed to re-evaluate loan');
+      }
+    } catch (error) {
+      console.error('Error re-evaluating loan:', error);
+      alert('Error re-evaluating loan');
+    }
+  };
+
   // Generate PDF report
   const generatePDFReport = () => {
     if (!selectedLoan) return;
@@ -1236,6 +1265,61 @@ const LoanApplicationsTable = ({ initialApplications }) => {
                           </div>
                         </div>
                       </div>
+
+                      {/* ML Prediction Details */}
+                      {selectedLoan && selectedLoan.eligibility_details && (
+                        <div style={{ marginBottom: '24px' }}>
+                          <h6 style={{ 
+                            color: '#8B4513', 
+                            marginBottom: '12px',
+                            fontWeight: '600',
+                            fontSize: '16px'
+                          }}>
+                            ML Prediction Details
+                          </h6>
+                          <div style={{
+                            border: '1px solid #D2B48C',
+                            borderRadius: '10px',
+                            padding: '16px',
+                            backgroundColor: '#FEFEFE'
+                          }}>
+                            <div style={{ marginBottom: '12px' }}>
+                              <small style={{ color: '#8B4513', fontWeight: '600' }}>ML Prediction:</small>
+                              <div style={{ color: '#654321', fontWeight: '500' }}>
+                                {selectedLoan.eligibility_details.ml_prediction || 'N/A'}
+                              </div>
+                            </div>
+                            <div style={{ marginBottom: '12px' }}>
+                              <small style={{ color: '#8B4513', fontWeight: '600' }}>Confidence Score:</small>
+                              <div style={{ color: '#654321', fontWeight: '500' }}>
+                                {selectedLoan.eligibility_details.confidence_score ? 
+                                  `${(selectedLoan.eligibility_details.confidence_score * 100).toFixed(1)}%` : 'N/A'}
+                              </div>
+                            </div>
+                            <div style={{ marginBottom: '12px' }}>
+                              <small style={{ color: '#8B4513', fontWeight: '600' }}>Prediction Date:</small>
+                              <div style={{ color: '#654321', fontWeight: '500' }}>
+                                {selectedLoan.eligibility_details.prediction_timestamp ? 
+                                  new Date(selectedLoan.eligibility_details.prediction_timestamp).toLocaleString() : 'N/A'}
+                              </div>
+                            </div>
+                            <button
+                              style={{
+                                backgroundColor: '#ff7300',
+                                color: 'white',
+                                border: 'none',
+                                padding: '8px 16px',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontSize: '12px'
+                              }}
+                              onClick={() => reevaluateLoan(selectedLoan._id)}
+                            >
+                              Re-evaluate with ML
+                            </button>
+                          </div>
+                        </div>
+                      )}
 
                       {/* Application Date */}
                       <div style={{ marginBottom: '24px' }}>
