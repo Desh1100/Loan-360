@@ -209,7 +209,7 @@ function LoanLandingPage() {
                         Loan Application Submitted
                       </button>
                       <small className="text-muted">
-                        Status: {userLoans[0].eligibility_status || 'Pending'}
+                        Status: {userLoans[0].status || 'Pending'}
                       </small>
                     </div>
                   ) : (
@@ -691,12 +691,12 @@ function LoanLandingPage() {
                   <span
                     className="badge px-3 py-2"
                     style={{
-                      backgroundColor: selectedLoan.eligibility_status === 'Approved' ? '#28a745' : 
-                                     selectedLoan.eligibility_status === 'Rejected' ? '#dc3545' : colors.accent,
+                      backgroundColor: selectedLoan.status === 'Approved' ? '#28a745' : 
+                                     selectedLoan.status === 'Rejected' ? '#dc3545' : colors.accent,
                       color: colors.white
                     }}
                   >
-                    {selectedLoan.eligibility_status || 'Pending'}
+                    {selectedLoan.status || 'Pending'}
                   </span>
                 </div>
               </div>

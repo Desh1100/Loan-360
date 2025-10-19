@@ -619,27 +619,116 @@ function ViewApplicationStatus() {
                       </div>
                     </div>
 
-                    {/* ML Prediction (if available) */}
+                    {/* ML Prediction Results */}
                     {selectedLoan.eligibility_details && (
                       <div className="mb-4 p-3 rounded-3" style={{ backgroundColor: 'rgba(1, 91, 89, 0.05)' }}>
                         <h6 className="fw-bold mb-3" style={{ color: colors.primary }}>
                           <MDBIcon fas icon="robot" className="me-2" />
-                          AI Assessment
+                          ML Pre-Assessment Results
                         </h6>
                         <div className="row g-3">
-                          <div className="col-md-6">
+                          <div className="col-md-4">
                             <strong>ML Prediction:</strong>
-                            <p className="mb-0">{selectedLoan.eligibility_details.ml_prediction}</p>
+                            <p className="mb-0">
+                              <span 
+                                className="badge px-2 py-1"
+                                style={{
+                                  backgroundColor: selectedLoan.eligibility_details.ml_prediction === 'Approved' ? '#28a745' : '#dc3545',
+                                  color: 'white'
+                                }}
+                              >
+                                {selectedLoan.eligibility_details.ml_prediction}
+                              </span>
+                            </p>
                           </div>
-                          <div className="col-md-6">
+                          <div className="col-md-4">
                             <strong>Confidence Score:</strong>
                             <p className="mb-0">
                               {(selectedLoan.eligibility_details.confidence_score * 100).toFixed(1)}%
                             </p>
                           </div>
+                          <div className="col-md-4">
+                            <strong>Prediction Date:</strong>
+                            <p className="mb-0 small">
+                              {selectedLoan.eligibility_details.prediction_timestamp ? 
+                                new Date(selectedLoan.eligibility_details.prediction_timestamp).toLocaleDateString() : 'N/A'}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="row g-3 mt-2">
+                          <div className="col-12">
+                            <small className="text-muted">
+                              <MDBIcon fas icon="info-circle" className="me-1" />
+                              This is an automated pre-assessment based on your financial profile. 
+                              The final decision will be made by our loan officers.
+                            </small>
+                          </div>
                         </div>
                       </div>
                     )}
+
+                    {/* Admin Final Decision */}
+                    <div className="mb-4 p-3 rounded-3" style={{ backgroundColor: 'rgba(255, 115, 0, 0.05)' }}>
+                      <h6 className="fw-bold mb-3" style={{ color: colors.accent }}>
+                        <MDBIcon fas icon="user-tie" className="me-2" />
+                        Admin Final Decision
+                      </h6>
+                      <div className="row g-3">
+                        <div className="col-md-4">
+                          <strong>Final Status:</strong>
+                          <p className="mb-0">
+                            <span 
+                              className="badge px-3 py-2"
+                              style={{
+                                backgroundColor: getStatusColor(selectedLoan.status),
+                                color: 'white',
+                                fontSize: '0.9rem'
+                              }}
+                            >
+                              {selectedLoan.status || 'Pending Review'}
+                            </span>
+                          </p>
+                        </div>
+                        <div className="col-md-4">
+                          <strong>Assigned Officer:</strong>
+                          <p className="mb-0">
+                            {selectedLoan.assignedAdmin?.name || 'Not Assigned'}
+                          </p>
+                        </div>
+                        <div className="col-md-4">
+                          <strong>Manual Override:</strong>
+                          <p className="mb-0">
+                            <span 
+                              className="badge px-2 py-1"
+                              style={{
+                                backgroundColor: selectedLoan.eligibility_details?.manual_override ? '#ffc107' : '#6c757d',
+                                color: selectedLoan.eligibility_details?.manual_override ? '#000' : 'white'
+                              }}
+                            >
+                              {selectedLoan.eligibility_details?.manual_override ? 'Yes' : 'No'}
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                      {selectedLoan.eligibility_details?.admin_notes && (
+                        <div className="row g-3 mt-2">
+                          <div className="col-12">
+                            <strong>Admin Notes:</strong>
+                            <p className="mb-0 mt-1 p-2 rounded" style={{ backgroundColor: 'rgba(255, 115, 0, 0.1)' }}>
+                              {selectedLoan.eligibility_details.admin_notes}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                      <div className="row g-3 mt-2">
+                        <div className="col-12">
+                          <small className="text-muted">
+                            <MDBIcon fas icon="shield-alt" className="me-1" />
+                            This is the final decision made by our loan officers after reviewing your application.
+                          </small>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>

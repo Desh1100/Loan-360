@@ -606,9 +606,9 @@ const LoanApplicationsTable = ({ initialApplications }) => {
       doc.setTextColor(...primaryColor);
       doc.setFontSize(14);
       doc.setFont('helvetica', 'bold');
-      doc.text('ML PREDICTION ANALYSIS', 20, yPosition);
+      doc.text('ML PRE-ASSESSMENT RESULTS', 20, yPosition);
       yPosition += 5;
-      doc.line(20, yPosition, 130, yPosition);
+      doc.line(20, yPosition, 140, yPosition);
       yPosition += 10;
       
       const mlPredictionData = [
@@ -676,7 +676,93 @@ const LoanApplicationsTable = ({ initialApplications }) => {
       
       const splitText = doc.splitTextToSize(explanationText, 160);
       doc.text(splitText, 25, yPosition + 15);
+      
+      yPosition += 45;
     }
+    
+    // Admin Final Decision Section
+    // Check if we need a new page for admin decision
+    if (yPosition > 200) {
+      doc.addPage();
+      yPosition = 30;
+    }
+    
+    doc.setTextColor(...primaryColor);
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('ADMIN FINAL DECISION', 20, yPosition);
+    yPosition += 5;
+    doc.line(20, yPosition, 130, yPosition);
+    yPosition += 10;
+    
+    const adminDecisionData = [
+      ['Final Status', selectedLoan.status || 'Pending Review'],
+      ['Assigned Officer', selectedLoan.assignedAdmin?.name || 'Not Assigned'],
+      ['Officer Email', selectedLoan.assignedAdmin?.email || 'N/A'],
+      ['Manual Override', selectedLoan.eligibility_details?.manual_override ? 'Yes' : 'No'],
+      ['Decision Date', selectedLoan.status_history && selectedLoan.status_history.length > 0 ? 
+        new Date(selectedLoan.status_history[selectedLoan.status_history.length - 1].timestamp).toLocaleString() : 'N/A']
+    ];
+    
+    // Add admin notes if they exist
+    if (selectedLoan.eligibility_details?.admin_notes) {
+      adminDecisionData.push(['Admin Notes', selectedLoan.eligibility_details.admin_notes]);
+    }
+    
+    autoTable(doc, {
+      startY: yPosition,
+      head: [['Decision Aspect', 'Details']],
+      body: adminDecisionData,
+      theme: 'striped',
+      headStyles: { 
+        fillColor: [139, 69, 19], // Brown color for admin section
+        textColor: [255, 255, 255],
+        fontSize: 11,
+        fontStyle: 'bold'
+      },
+      styles: { 
+        fontSize: 10, 
+        cellPadding: 6,
+        textColor: textColor
+      },
+      columnStyles: { 
+        0: { fontStyle: 'bold', cellWidth: 60, fillColor: [248, 248, 248] },
+        1: { cellWidth: 120 }
+      },
+      alternateRowStyles: { fillColor: [255, 252, 240] }
+    });
+    
+    // Add Admin Decision explanation box
+    yPosition = doc.lastAutoTable.finalY + 10;
+    
+    // Check if we need space for the explanation box
+    if (yPosition > 230) {
+      doc.addPage();
+      yPosition = 30;
+    }
+    
+    // Admin Decision Explanation Box
+    doc.setFillColor(248, 248, 248);
+    doc.roundedRect(20, yPosition, 170, 30, 3, 3, 'F');
+    doc.setDrawColor(139, 69, 19);
+    doc.setLineWidth(1);
+    doc.roundedRect(20, yPosition, 170, 30, 3, 3, 'S');
+    
+    doc.setTextColor(...primaryColor);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.text('ADMIN DECISION SUMMARY:', 25, yPosition + 8);
+    
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    const adminExplanationText = selectedLoan.eligibility_details?.manual_override ?
+      `This loan application has been manually reviewed and the final decision overrides the ML prediction. ` +
+      `The assigned loan officer has made the final determination based on comprehensive review and additional factors.` :
+      `This loan application follows the standard review process. The final decision is made by our qualified ` +
+      `loan officers who consider both the automated assessment and additional human factors for fair evaluation.`;
+    
+    const adminSplitText = doc.splitTextToSize(adminExplanationText, 160);
+    doc.text(adminSplitText, 25, yPosition + 15);
     
     // Add Status History Section to PDF
     if (statusHistory.length > 0) {
@@ -1506,7 +1592,7 @@ const LoanApplicationsTable = ({ initialApplications }) => {
                             fontWeight: '600',
                             fontSize: '16px'
                           }}>
-                            ML Prediction Details
+                            ML Pre-Assessment Results
                           </h6>
                           <div style={{
                             border: '1px solid #D2B48C',
@@ -1517,7 +1603,17 @@ const LoanApplicationsTable = ({ initialApplications }) => {
                             <div style={{ marginBottom: '12px' }}>
                               <small style={{ color: '#8B4513', fontWeight: '600' }}>ML Prediction:</small>
                               <div style={{ color: '#654321', fontWeight: '500' }}>
-                                {selectedLoan.eligibility_details.ml_prediction || 'N/A'}
+                                <span 
+                                  style={{
+                                    backgroundColor: selectedLoan.eligibility_details.ml_prediction === 'Approved' ? '#28a745' : '#dc3545',
+                                    color: 'white',
+                                    padding: '4px 8px',
+                                    borderRadius: '4px',
+                                    fontSize: '12px'
+                                  }}
+                                >
+                                  {selectedLoan.eligibility_details.ml_prediction || 'N/A'}
+                                </span>
                               </div>
                             </div>
                             <div style={{ marginBottom: '12px' }}>
@@ -1534,6 +1630,9 @@ const LoanApplicationsTable = ({ initialApplications }) => {
                                   new Date(selectedLoan.eligibility_details.prediction_timestamp).toLocaleString() : 'N/A'}
                               </div>
                             </div>
+                            <div style={{ marginTop: '12px', fontSize: '12px', color: '#666' }}>
+                              <i>This is an automated pre-assessment based on financial profile.</i>
+                            </div>
                             <button
                               style={{
                                 backgroundColor: '#ff7300',
@@ -1542,7 +1641,8 @@ const LoanApplicationsTable = ({ initialApplications }) => {
                                 padding: '8px 16px',
                                 borderRadius: '4px',
                                 cursor: 'pointer',
-                                fontSize: '12px'
+                                fontSize: '12px',
+                                marginTop: '8px'
                               }}
                               onClick={() => reevaluateLoan(selectedLoan._id)}
                             >
@@ -1551,6 +1651,86 @@ const LoanApplicationsTable = ({ initialApplications }) => {
                           </div>
                         </div>
                       )}
+
+                      {/* Admin Final Decision */}
+                      <div style={{ marginBottom: '24px' }}>
+                        <h6 style={{ 
+                          color: '#8B4513', 
+                          marginBottom: '12px',
+                          fontWeight: '600',
+                          fontSize: '16px'
+                        }}>
+                          Admin Final Decision
+                        </h6>
+                        <div style={{
+                          border: '1px solid #ff7300',
+                          borderRadius: '10px',
+                          padding: '16px',
+                          backgroundColor: 'rgba(255, 115, 0, 0.05)'
+                        }}>
+                          <div style={{ marginBottom: '12px' }}>
+                            <small style={{ color: '#8B4513', fontWeight: '600' }}>Final Status:</small>
+                            <div style={{ color: '#654321', fontWeight: '500' }}>
+                              <span 
+                                style={{
+                                  backgroundColor: 
+                                    selectedLoan.status === 'Approved' ? '#28a745' :
+                                    selectedLoan.status === 'Rejected' ? '#dc3545' :
+                                    selectedLoan.status === 'Not Eligible' ? '#dc3545' :
+                                    '#ffc107',
+                                  color: selectedLoan.status === 'Pending' ? '#000' : 'white',
+                                  padding: '4px 12px',
+                                  borderRadius: '4px',
+                                  fontSize: '12px'
+                                }}
+                              >
+                                {selectedLoan.status || 'Pending Review'}
+                              </span>
+                            </div>
+                          </div>
+                          <div style={{ marginBottom: '12px' }}>
+                            <small style={{ color: '#8B4513', fontWeight: '600' }}>Assigned Officer:</small>
+                            <div style={{ color: '#654321', fontWeight: '500' }}>
+                              {selectedLoan.assignedAdmin?.name || 'Not Assigned'}
+                            </div>
+                          </div>
+                          <div style={{ marginBottom: '12px' }}>
+                            <small style={{ color: '#8B4513', fontWeight: '600' }}>Manual Override:</small>
+                            <div style={{ color: '#654321', fontWeight: '500' }}>
+                              <span 
+                                style={{
+                                  backgroundColor: selectedLoan.eligibility_details?.manual_override ? '#ffc107' : '#6c757d',
+                                  color: selectedLoan.eligibility_details?.manual_override ? '#000' : 'white',
+                                  padding: '2px 8px',
+                                  borderRadius: '4px',
+                                  fontSize: '11px'
+                                }}
+                              >
+                                {selectedLoan.eligibility_details?.manual_override ? 'Yes' : 'No'}
+                              </span>
+                            </div>
+                          </div>
+                          {selectedLoan.eligibility_details?.admin_notes && (
+                            <div style={{ marginBottom: '12px' }}>
+                              <small style={{ color: '#8B4513', fontWeight: '600' }}>Admin Notes:</small>
+                              <div style={{ 
+                                color: '#654321', 
+                                fontWeight: '500',
+                                backgroundColor: 'rgba(255, 115, 0, 0.1)',
+                                padding: '8px',
+                                borderRadius: '4px',
+                                marginTop: '4px',
+                                fontSize: '12px'
+                              }}>
+                                {selectedLoan.eligibility_details.admin_notes}
+                              </div>
+                            </div>
+                          )}
+                          <div style={{ marginTop: '12px', fontSize: '12px', color: '#666' }}>
+                            <i>This is the final decision made by loan officers after review.</i>
+                          </div>
+                        </div>
+                      </div>
 
                       {/* Application Date */}
                       <div style={{ marginBottom: '24px' }}>

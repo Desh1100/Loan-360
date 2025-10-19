@@ -286,26 +286,107 @@ function SystemEligibilityResult() {
                       </MDBCol>
                     </MDBRow>
 
-                    {/* ML Prediction Details (if available) */}
+                    {/* ML Pre-Assessment Results */}
                     {eligibilityData?.eligibility_details && (
                       <div className="mt-4 p-3 rounded-3" style={{ backgroundColor: colors.white }}>
-                        <h6 className="fw-bold mb-2" style={{ color: colors.primary }}>
-                          <MDBIcon fas icon="brain" className="me-2" /> AI Assessment
+                        <h6 className="fw-bold mb-3" style={{ color: colors.primary }}>
+                          <MDBIcon fas icon="robot" className="me-2" /> ML Pre-Assessment Results
                         </h6>
-                        <div className="row g-2">
-                          <div className="col-6">
-                            <small className="text-muted">Prediction:</small>
-                            <div className="fw-bold">{eligibilityData.eligibility_details.ml_prediction}</div>
+                        <div className="row g-3">
+                          <div className="col-md-4">
+                            <small className="text-muted">ML Prediction:</small>
+                            <div className="fw-bold">
+                              <span 
+                                className="badge px-2 py-1"
+                                style={{
+                                  backgroundColor: eligibilityData.eligibility_details.ml_prediction === 'Approved' ? '#28a745' : '#dc3545',
+                                  color: 'white'
+                                }}
+                              >
+                                {eligibilityData.eligibility_details.ml_prediction}
+                              </span>
+                            </div>
                           </div>
-                          <div className="col-6">
+                          <div className="col-md-4">
                             <small className="text-muted">Confidence:</small>
                             <div className="fw-bold">
                               {(eligibilityData.eligibility_details.confidence_score * 100).toFixed(1)}%
                             </div>
                           </div>
+                          <div className="col-md-4">
+                            <small className="text-muted">Assessment Date:</small>
+                            <div className="fw-bold small">
+                              {eligibilityData.eligibility_details.prediction_timestamp ? 
+                                new Date(eligibilityData.eligibility_details.prediction_timestamp).toLocaleDateString() : 'N/A'}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="mt-2">
+                          <small className="text-muted">
+                            <MDBIcon fas icon="info-circle" className="me-1" />
+                            This is an automated pre-assessment. The final decision is made by our loan officers.
+                          </small>
                         </div>
                       </div>
                     )}
+
+                    {/* Admin Final Decision */}
+                    <div className="mt-4 p-3 rounded-3" style={{ backgroundColor: 'rgba(255, 115, 0, 0.05)' }}>
+                      <h6 className="fw-bold mb-3" style={{ color: colors.accent }}>
+                        <MDBIcon fas icon="user-tie" className="me-2" /> Admin Final Decision
+                      </h6>
+                      <div className="row g-3">
+                        <div className="col-md-4">
+                          <small className="text-muted">Final Status:</small>
+                          <div className="fw-bold">
+                            <span 
+                              className="badge px-3 py-2"
+                              style={{
+                                backgroundColor: statusColor,
+                                color: 'white',
+                                fontSize: '0.9rem'
+                              }}
+                            >
+                              {eligibilityData?.status || 'Pending Review'}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="col-md-4">
+                          <small className="text-muted">Assigned Officer:</small>
+                          <div className="fw-bold">
+                            {eligibilityData?.assignedAdmin?.name || 'Not Assigned'}
+                          </div>
+                        </div>
+                        <div className="col-md-4">
+                          <small className="text-muted">Manual Override:</small>
+                          <div className="fw-bold">
+                            <span 
+                              className="badge px-2 py-1"
+                              style={{
+                                backgroundColor: eligibilityData?.eligibility_details?.manual_override ? '#ffc107' : '#6c757d',
+                                color: eligibilityData?.eligibility_details?.manual_override ? '#000' : 'white'
+                              }}
+                            >
+                              {eligibilityData?.eligibility_details?.manual_override ? 'Yes' : 'No'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      {eligibilityData?.eligibility_details?.admin_notes && (
+                        <div className="mt-3">
+                          <small className="text-muted">Admin Notes:</small>
+                          <div className="mt-1 p-2 rounded" style={{ backgroundColor: 'rgba(255, 115, 0, 0.1)' }}>
+                            <small>{eligibilityData.eligibility_details.admin_notes}</small>
+                          </div>
+                        </div>
+                      )}
+                      <div className="mt-2">
+                        <small className="text-muted">
+                          <MDBIcon fas icon="shield-alt" className="me-1" />
+                          This is the final decision made by our loan officers after reviewing your application.
+                        </small>
+                      </div>
+                    </div>
                   </MDBCardBody>
                 </MDBCard>
                 
