@@ -116,7 +116,7 @@ function LoanLandingPage() {
       e.preventDefault();
       navigate('/login');
     } else {
-      navigate('/eligibility-check');
+      navigate('/PersonalInfo');
     }
   };
 
@@ -234,6 +234,16 @@ function LoanLandingPage() {
                     className="btn btn-outline-primary btn-sm w-100 mb-2"
                     onClick={() => {
                       setIsProfileOpen(false);
+                      navigate('/view-applications');
+                    }}
+                  >
+                    <i className="fas fa-list-alt me-2"></i>
+                    View Applications
+                  </button>
+                  <button
+                    className="btn btn-outline-primary btn-sm w-100 mb-2"
+                    onClick={() => {
+                      setIsProfileOpen(false);
                       navigate('/profile');
                     }}
                   >
@@ -290,7 +300,7 @@ function LoanLandingPage() {
                 
                 <button 
                   onClick={handleApplyLoan}
-                  className="btn rounded-pill px-5 py-3 fw-bold"
+                  className="btn rounded-pill px-5 py-3 fw-bold me-3"
                   style={{ 
                     backgroundColor: colors.accent,
                     borderColor: colors.accent,
@@ -300,6 +310,22 @@ function LoanLandingPage() {
                 >
                   Apply now
                 </button>
+                
+                {isLoggedIn && (
+                  <button 
+                    onClick={() => navigate('/view-applications')}
+                    className="btn rounded-pill px-5 py-3 fw-bold"
+                    style={{ 
+                      backgroundColor: colors.primary,
+                      borderColor: colors.primary,
+                      fontSize: '1.1rem',
+                      color: colors.white
+                    }}
+                  >
+                    <i className="fas fa-list-alt me-2"></i>
+                    View Applications
+                  </button>
+                )}
               </div>
             </div>
             
@@ -429,18 +455,36 @@ function LoanLandingPage() {
             ))}
           </div>
           
-          <button 
-            onClick={handleApplyLoan}
-            className="btn mt-4 rounded-pill px-5 py-3 fw-bold"
-            style={{ 
-              backgroundColor: colors.accent,
-              borderColor: colors.accent,
-              fontSize: '1.1rem',
-              color: colors.white
-            }}
-          >
-            {isLoggedIn ? 'Apply now' : 'Login to apply'}
-          </button>
+          <div className="d-flex flex-wrap gap-3 justify-content-center">
+            <button 
+              onClick={handleApplyLoan}
+              className="btn rounded-pill px-5 py-3 fw-bold"
+              style={{ 
+                backgroundColor: colors.accent,
+                borderColor: colors.accent,
+                fontSize: '1.1rem',
+                color: colors.white
+              }}
+            >
+              {isLoggedIn ? 'Apply now' : 'Login to apply'}
+            </button>
+            
+            {isLoggedIn && (
+              <button 
+                onClick={() => navigate('/view-applications')}
+                className="btn rounded-pill px-5 py-3 fw-bold"
+                style={{ 
+                  backgroundColor: colors.primary,
+                  borderColor: colors.primary,
+                  fontSize: '1.1rem',
+                  color: colors.white
+                }}
+              >
+                <i className="fas fa-list-alt me-2"></i>
+                View My Applications
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

@@ -254,7 +254,7 @@ const UserProfile = () => {
                       borderColor: colors.accent,
                       color: colors.white
                     }}
-                    onClick={() => navigate('/eligibility-check')}
+                    onClick={() => navigate('/PersonalInfo')}
                   >
                     <i className="fas fa-plus me-2"></i>
                     Apply for New Loan
@@ -406,7 +406,7 @@ const UserProfile = () => {
                         borderColor: colors.accent,
                         color: colors.white
                       }}
-                      onClick={() => navigate('/eligibility-check')}
+                      onClick={() => navigate('/PersonalInfo')}
                     >
                       Apply for Loan
                     </button>
@@ -437,7 +437,26 @@ const UserProfile = () => {
                                   <strong>Amount:</strong> LKR {loan.financial_details?.loan_amount?.toLocaleString()}
                                 </p>
                                 <p className="card-text mb-1">
+                                <div className="d-flex justify-content-between align-items-center mb-2">
                                   <strong>Applied:</strong> {formatDate(loan.application_date)}
+                                  <button
+                                    className="btn btn-sm"
+                                    style={{
+                                      backgroundColor: colors.accent,
+                                      borderColor: colors.accent,
+                                      color: colors.white,
+                                      fontSize: '0.75rem'
+                                    }}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      localStorage.setItem('recentLoanId', loan.id);
+                                      navigate('/eligibility-checker');
+                                    }}
+                                  >
+                                    <i className="fas fa-search me-1"></i>
+                                    Check Status
+                                  </button>
+                                </div>
                                 </p>
                               </div>
                               <div className="text-end">

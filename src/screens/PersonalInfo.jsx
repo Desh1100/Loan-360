@@ -156,11 +156,17 @@ function LoanApplicationForm() {
             },
           }
         );
+        
+        // Store the loan ID for eligibility check
+        const loanId = response.data.loan._id || response.data.loan.id;
+        localStorage.setItem('recentLoanId', loanId);
+        
         alert('Loan application submitted successfully!');
         setLoading(true); // Show loader
         setTimeout(() => {
           setLoading(false); // Hide loader
-          navigate('/landing'); // Navigate to /landing
+          // Navigate to eligibility checker for user to manually trigger check
+          navigate('/eligibility-checker', { state: { loanId } });
         }, 2000); // Simulate loading for 2 seconds
         console.log('Backend response:', response.data);
       } catch (error) {

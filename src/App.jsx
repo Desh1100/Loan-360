@@ -8,6 +8,9 @@ import PersonalInfo from './screens/PersonalInfo';
 import FamilyInfo from './screens/FamilyInfo';
 import EligibilityCheck from './screens/EligibilityCheck';
 import EligibilityResult from './screens/EligibilityResult';
+import SystemEligibilityResult from './screens/SystemEligibilityResult';
+import EligibilityChecker from './screens/EligibilityChecker';
+import ViewApplicationStatus from './screens/ViewApplicationStatus';
 import UserProfile from './components/ui/UserProfile';
 
 // Import Admin components
@@ -30,6 +33,9 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/eligibility-check" element={<EligibilityCheck />} />
           <Route path="/eligibility-result" element={<EligibilityResult />} />
+          <Route path="/system-eligibility-result" element={<SystemEligibilityResult />} />
+          <Route path="/eligibility-checker" element={<EligibilityChecker />} />
+          <Route path="/view-applications" element={<ViewApplicationStatus />} />
           <Route path="/PersonalInfo" element={<PersonalInfo />} />
           <Route path="/family-info" element={<FamilyInfo />} />
           <Route path="/profile" element={<UserProfile />} />
