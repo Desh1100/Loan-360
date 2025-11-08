@@ -16,7 +16,7 @@ const DashBoard = () => {
     const [statsLoading, setStatsLoading] = useState(true);
 
     const handleNavigation = () => {
-      navigate("./AutoFeedback");
+      navigate("/admin/auto-feedback");
     };
 
     const handleAnalytics = () => {
