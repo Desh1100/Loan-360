@@ -41,6 +41,10 @@ const DashBoard = () => {
       navigate('/admin/login');
     };
 
+    const handleAIChat = () => {
+      navigate('/admin/ai-chat');
+    };
+
     // Check if current user is super admin
     const isSuperAdmin = () => {
       const adminUser = localStorage.getItem('adminUser');
@@ -224,6 +228,15 @@ const DashBoard = () => {
         <div className={styles.table_container}>
           <LoanApplicationsTable/>
         </div>
+      </div>
+
+      {/* Floating AI Chat Icon */}
+      <div className={styles.floating_chat_icon} onClick={handleAIChat}>
+        <div className={styles.chat_icon}>
+          <span className={styles.ai_icon}>🤖</span>
+          <div className={styles.chat_pulse}></div>
+        </div>
+        <div className={styles.chat_tooltip}>AI Assistant</div>
       </div>
     </div>
   );

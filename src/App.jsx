@@ -21,6 +21,7 @@ import Signup from './components/Admin/Singup';
 import AdminLogin from './components/Admin/Login';
 import ManageAdmins from './components/Admin/ManageAdmins';
 import SystemSettings from './components/Admin/SystemSettings';
+import AIChat from './components/Admin/AIChat';
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/manage-admins" element={<ManageAdmins />} />
           <Route path="/admin/system-settings" element={<SystemSettings />} />
+          <Route path="/admin/ai-chat" element={<AIChat />} />
         </Routes>
       </div>
     </Router>
