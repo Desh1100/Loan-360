@@ -497,7 +497,7 @@ function LoanLandingPage() {
                     <i className="fas fa-list-alt me-2"></i>
                     View Applications
                   </button>
-                  <button
+                  {/* <button
                     className="btn btn-outline-primary btn-sm w-100 mb-2"
                     onClick={() => {
                       setIsProfileOpen(false);
@@ -506,7 +506,7 @@ function LoanLandingPage() {
                   >
                     <i className="fas fa-user-cog me-2"></i>
                     View Profile
-                  </button>
+                  </button> */}
                   <button
                     className="btn btn-outline-danger btn-sm w-100"
                     onClick={() => {
