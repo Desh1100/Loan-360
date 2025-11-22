@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ChatIcon from '../components/ui/ChatIcon';
@@ -16,6 +16,8 @@ function LoanLandingPage() {
   const [userLoans, setUserLoans] = useState([]);
   const [isLoanPanelOpen, setIsLoanPanelOpen] = useState(false);
   const [selectedLoan, setSelectedLoan] = useState(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const aboutSectionRef = useRef(null);
   const navigate = useNavigate();
   
   // New modern design color theme
@@ -27,6 +29,38 @@ function LoanLandingPage() {
     text: '#333333', // Dark text
     white: '#ffffff', // White
   };
+
+  // Slider data
+  const slides = [
+    {
+      title: "Smarter Loans. Faster Decisions.",
+      subtitle: "Experience the future of lending with AI-powered decisions",
+      image: "/2.1.jpeg"
+    },
+    {
+      title: "Your Intelligent Path to Financial Confidence.",
+      subtitle: "Navigate your financial journey with confidence and clarity",
+      image: "/1.jpeg"
+    },
+    {
+      title: "AI-Powered Lending for a Smarter Tomorrow.",
+      subtitle: "Revolutionary technology meeting your financial needs",
+      image: "/4.2.jpeg"
+    },
+    {
+      title: "Transforming Loan Decisions Through Intelligence.",
+      subtitle: "Data-driven insights for better financial outcomes",
+      image: "/4.1.jpeg"
+    }
+  ];
+
+  // Auto-advance slider
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [slides.length]);
 
   // Fetch user data and loan applications
   const fetchUserData = async () => {
@@ -120,15 +154,238 @@ function LoanLandingPage() {
     }
   };
 
+  // Handle scroll to about section
+  const scrollToAbout = () => {
+    if (aboutSectionRef.current) {
+      aboutSectionRef.current.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
   return (
     <div style={{ backgroundColor: colors.background, paddingTop: '80px' }}>
       <Header />
+      
+      {/* AI-Powered Slider Section */}
+      <div style={{ 
+        backgroundColor: '#e3f2fd', 
+        padding: '60px 0',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        <div className="container">
+          <div className="position-relative" style={{ height: '500px' }}>
+            {slides.map((slide, index) => (
+              <div
+                key={index}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  opacity: currentSlide === index ? 1 : 0,
+                  transform: currentSlide === index ? 'translateX(0)' : 'translateX(100%)',
+                  transition: 'opacity 1.2s ease-in-out, transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  pointerEvents: currentSlide === index ? 'auto' : 'none'
+                }}
+              >
+                <div className="row align-items-center w-100">
+                  <div className="col-md-6" style={{
+                    animation: currentSlide === index ? 'slideInLeft 1s ease-out' : 'none'
+                  }}>
+                    <div style={{ paddingRight: '40px' }}>
+                      <h1 className="display-4 fw-bold mb-4" style={{ 
+                        color: colors.primary,
+                        lineHeight: '1.2'
+                      }}>
+                        {slide.title}
+                      </h1>
+                      <p className="lead mb-4" style={{ 
+                        color: colors.text,
+                        fontSize: '1.3rem'
+                      }}>
+                        {slide.subtitle}
+                      </p>
+                      <div className="d-flex gap-3">
+                        <button 
+                          onClick={handleApplyLoan}
+                          className="btn rounded-pill px-4 py-3 fw-bold"
+                          style={{ 
+                            backgroundColor: colors.accent,
+                            borderColor: colors.accent,
+                            fontSize: '1.1rem',
+                            color: colors.white,
+                            boxShadow: '0 4px 15px rgba(255, 115, 0, 0.3)'
+                          }}
+                        >
+                          Get Started
+                          <i className="fas fa-arrow-right ms-2"></i>
+                        </button>
+                        <button 
+                          className="btn btn-outline-primary rounded-pill px-4 py-3 fw-bold"
+                          style={{ 
+                            borderColor: colors.primary,
+                            color: colors.primary,
+                            fontSize: '1.1rem'
+                          }}
+                          onClick={() => {
+                            document.getElementById('advantages-section')?.scrollIntoView({ behavior: 'smooth' });
+                          }}
+                        >
+                          Learn More
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-6" style={{
+                    animation: currentSlide === index ? 'slideInRight 1s ease-out' : 'none'
+                  }}>
+                    <div style={{ 
+                      position: 'relative',
+                      padding: '20px',
+                      height: '400px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <div style={{
+                        position: 'absolute',
+                        top: '10px',
+                        right: '10px',
+                        width: '100%',
+                        height: '100%',
+                        background: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.accent} 100%)`,
+                        borderRadius: '20px',
+                        opacity: 0.1,
+                        zIndex: 0
+                      }}></div>
+                      <img 
+                        src={slide.image} 
+                        alt={slide.title}
+                        style={{ 
+                          width: '100%',
+                          height: '380px',
+                          objectFit: 'cover',
+                          borderRadius: '20px',
+                          boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
+                          position: 'relative',
+                          zIndex: 1
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          {/* Slider Controls */}
+          <div className="d-flex justify-content-center align-items-center mt-4 gap-3">
+            {/* Previous Button */}
+            <button
+              className="btn btn-sm"
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                backgroundColor: colors.primary,
+                color: colors.white,
+                border: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+              onClick={() => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)}
+            >
+              <i className="fas fa-chevron-left"></i>
+            </button>
+            
+            {/* Dot Indicators */}
+            <div className="d-flex gap-2">
+              {slides.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  style={{
+                    width: currentSlide === index ? '40px' : '12px',
+                    height: '12px',
+                    borderRadius: '6px',
+                    border: 'none',
+                    backgroundColor: currentSlide === index ? colors.accent : colors.primary,
+                    opacity: currentSlide === index ? 1 : 0.4,
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer'
+                  }}
+                ></button>
+              ))}
+            </div>
+            
+            {/* Next Button */}
+            <button
+              className="btn btn-sm"
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                backgroundColor: colors.primary,
+                color: colors.white,
+                border: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+              onClick={() => setCurrentSlide((prev) => (prev + 1) % slides.length)}
+            >
+              <i className="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Keyframe Animations */}
+      <style>{`
+        @keyframes slideInLeft {
+          from {
+            opacity: 0;
+            transform: translateX(-30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        
+        @keyframes slideInRight {
+          from {
+            opacity: 0;
+            transform: translateX(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+      `}</style>
       
       {/* User Profile Icon - positioned absolutely */}
       {isLoggedIn && (
         <div style={{ 
           position: 'fixed', 
-          top: '20px', 
+          top: '90px', 
           right: '20px', 
           zIndex: 9999 
         }}>
@@ -273,7 +530,7 @@ function LoanLandingPage() {
       )}
       
       {/* Hero Section with 0% Interest Banner */}
-      <div style={{ backgroundColor: colors.primary, position: 'relative', overflow: 'hidden', padding: '40px 0' }}>
+      <div ref={aboutSectionRef} style={{ backgroundColor: colors.primary, position: 'relative', overflow: 'hidden', padding: '40px 0' }}>
         <div className="container">
           <div className="row align-items-center">
             <div className="col-md-7 text-white pe-5">
@@ -285,19 +542,20 @@ function LoanLandingPage() {
               )}
               
               <div className="mb-4">
-                <h1 className="display-1 fw-bold" style={{ color: colors.accent }}>0%</h1>
-                <h2 className="display-5 fw-bold text-uppercase" style={{ color: colors.accent }}>WITH INTEREST</h2>
+                <h1 className="display-3 fw-bold mb-3" style={{ color: colors.white }}>Loan 360</h1>
+                <p className="lead mb-4" style={{ color: colors.white, fontSize: '1.2rem', lineHeight: '1.8' }}>
+                  Loan360 is an AI-powered loan assessment and advisory platform designed to make borrowing simple, fast, and transparent. 
+                  Using advanced Machine Learning and Large Language Models, Loan360 delivers instant eligibility insights, personalized advice, 
+                  and seamless digital loan applications. Whether you're a customer looking for clarity or a banker seeking smarter decisions, 
+                  Loan360 brings intelligence, speed, and trust to every step of the lending journey.
+                </p>
               </div>
               
-              <h3 className="h3 fw-bold mb-3" style={{ color: colors.white }}>First loan up to</h3>
-              <h2 className="display-6 fw-bold mb-4" style={{ color: colors.white }}>Rs. 20,000</h2>
+              <h3 className="h4 fw-bold mb-4" style={{ color: colors.accent }}>
+                Let's Start Your Journey with Loan360!
+              </h3>
               
               <div style={{ maxWidth: '400px' }}>
-                <div className="mb-4">
-                  <p className="mb-1 fw-semibold">Fill out the application in 5 minutes.</p>
-                  <p className="mb-0 fw-semibold">Get the money </p>
-                </div>
-                
                 <button 
                   onClick={handleApplyLoan}
                   className="btn rounded-pill px-5 py-3 fw-bold me-3"
@@ -314,7 +572,7 @@ function LoanLandingPage() {
                 {isLoggedIn && (
                   <button 
                     onClick={() => navigate('/view-applications')}
-                    className="btn rounded-pill px-5 py-3 fw-bold"
+                    className="btn rounded-pill px-5 py-3 fw-bold mt-3"
                     style={{ 
                       backgroundColor: colors.primary,
                       borderColor: colors.primary,
@@ -376,7 +634,7 @@ function LoanLandingPage() {
       </div>
       
       {/* Advantages Section */}
-      <div style={{ backgroundColor: colors.secondary, padding: '40px 0' }}>
+      <div id="advantages-section" style={{ backgroundColor: colors.secondary, padding: '40px 0' }}>
         <div className="container">
           <h2 className="text-center text-white mb-5">
             The advantages of using <span style={{ color: colors.accent }}>Loan 360</span> services
@@ -575,19 +833,96 @@ function LoanLandingPage() {
       <div className="col-lg-3 col-md-6 mb-4 mb-md-0">
         <h5 className="mb-4 text-start" style={{ fontWeight: 700 }}>Company</h5>
         <ul className="list-unstyled text-start">
-          <li className="mb-2"><a href="#" className="footer-link">About</a></li>
-          <li className="mb-2"><a href="#" className="footer-link">Documents</a></li>
-          <li className="mb-2"><a href="#" className="footer-link">Contacts</a></li>
+          <li className="mb-2">
+            <a 
+              href="#" 
+              className="footer-link"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate('/about');
+              }}
+            >
+              About
+            </a>
+          </li>
+          <li className="mb-2">
+            <a 
+              href="#" 
+              className="footer-link"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate('/contact');
+              }}
+            >
+              Documents
+            </a>
+          </li>
+          <li className="mb-2">
+            <a 
+              href="#" 
+              className="footer-link"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate('/contact');
+              }}
+            >
+              Contacts
+            </a>
+          </li>
         </ul>
       </div>
       {/* Customer */}
       <div className="col-lg-3 col-md-6 mb-4 mb-md-0">
         <h5 className="mb-4 text-start" style={{ fontWeight: 700 }}>Customer</h5>
         <ul className="list-unstyled text-start">
-          <li className="mb-2"><a href="#" className="footer-link">Upload your payment</a></li>
-          <li className="mb-2"><a href="#" className="footer-link">FAQs</a></li>
-          <li className="mb-2"><a href="#" className="footer-link">How to get a loan</a></li>
-          <li className="mb-2"><a href="#" className="footer-link">How to repay a loan</a></li>
+          <li className="mb-2">
+            <a 
+              href="#" 
+              className="footer-link"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate('/contact');
+              }}
+            >
+              Upload your payment
+            </a>
+          </li>
+          <li className="mb-2">
+            <a 
+              href="#" 
+              className="footer-link"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate('/faqs');
+              }}
+            >
+              FAQs
+            </a>
+          </li>
+          <li className="mb-2">
+            <a 
+              href="#" 
+              className="footer-link"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate('/how-to');
+              }}
+            >
+              How to get a loan
+            </a>
+          </li>
+          <li className="mb-2">
+            <a 
+              href="#" 
+              className="footer-link"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate('/faqs');
+              }}
+            >
+              How to repay a loan
+            </a>
+          </li>
         </ul>
       </div>
       {/* Social */}
@@ -818,12 +1153,6 @@ function LoanLandingPage() {
           </div>
         </>
       )}
-
-      {/* Chat Icon */}
-      <div className="chat-icon">
-        <ChatIcon onClick={() => setIsChatOpen(!isChatOpen)} />
-        {isChatOpen && <ChatWindow onClose={() => setIsChatOpen(false)} />}
-      </div>
     </div>
   );
 }

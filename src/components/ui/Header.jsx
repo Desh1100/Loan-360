@@ -61,17 +61,17 @@ const Header = () => {
         <nav className={`main-nav ${showNav ? 'show' : ''}`}>
           <ul className="nav-links" style={{ gap: '30px' }}>
             <li className="nav-item">
-              <Link to="/" className="nav-link" style={{ color: colors.text, fontWeight: '500' }}>About</Link>
+              <Link to="/about" className="nav-link" style={{ color: colors.text, fontWeight: '500' }}>About</Link>
             </li>
            
             <li className="nav-item">
-              <Link to="#" className="nav-link" style={{ color: colors.text, fontWeight: '500' }}>How to</Link>
+              <Link to="/how-to" className="nav-link" style={{ color: colors.text, fontWeight: '500' }}>How to</Link>
             </li>
             <li className="nav-item">
-              <Link to="#" className="nav-link" style={{ color: colors.text, fontWeight: '500' }}>FAQs</Link>
+              <Link to="/faqs" className="nav-link" style={{ color: colors.text, fontWeight: '500' }}>FAQs</Link>
             </li>
             <li className="nav-item">
-              <Link to="#" className="nav-link" style={{ color: colors.text, fontWeight: '500' }}>Contact us</Link>
+              <Link to="/contact" className="nav-link" style={{ color: colors.text, fontWeight: '500' }}>Contact us</Link>
             </li>
             
             {isLoggedIn ? (

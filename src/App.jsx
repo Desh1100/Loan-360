@@ -12,6 +12,10 @@ import SystemEligibilityResult from './screens/SystemEligibilityResult';
 import EligibilityChecker from './screens/EligibilityChecker';
 import ViewApplicationStatus from './screens/ViewApplicationStatus';
 import UserProfile from './components/ui/UserProfile';
+import About from './screens/About';
+import HowTo from './screens/HowTo';
+import FAQs from './screens/FAQs';
+import Contact from './screens/Contact';
 
 // Import Admin components
 import DashBoard from './components/Admin/DashBoard';
@@ -40,6 +44,10 @@ function App() {
           <Route path="/PersonalInfo" element={<PersonalInfo />} />
           <Route path="/family-info" element={<FamilyInfo />} />
           <Route path="/profile" element={<UserProfile />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/how-to" element={<HowTo />} />
+          <Route path="/faqs" element={<FAQs />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/admin/app" element={<DashBoard />} />
           <Route path="/dashboard" element={<DashBoard />} />
           <Route path="/admin/signup" element={<Signup />} />
